@@ -1,6 +1,6 @@
 # DM Puppeteer ­
 
-**D&D stream command center â€” character overlays, OBS control, player portraits, and live dice roll visuals, all from one app.**
+**D&D stream command center character overlays, OBS control, player portraits, and live dice roll visuals, all from one app.**
 
 Import characters, configure animated overlays, parse live dice rolls from Discord, and control everything from your Stream Deck. Built for DMs who stream on Twitch/YouTube.
 
