@@ -1,4 +1,4 @@
-# DM Puppeteer ðŸŽ­
+# DM Puppeteer ­
 
 **D&D stream command center â€” character overlays, OBS control, player portraits, and live dice roll visuals, all from one app.**
 
@@ -8,14 +8,14 @@ Import characters, configure animated overlays, parse live dice rolls from Disco
 
 ## What It Does
 
-### ðŸŽ­ NPC Puppet Tab
+### NPC Puppet Tab
 - 4-frame animated character sprites (idle, blink, talk, talk+blink)
 - Mic-reactive mouth movement + random auto-blink
 - Per-character settings: size, transparency, blink timing, bounce/pop-in animations
 - Stream Deck hardware integration or keyboard hotkeys
 - Drag characters onto buttons, press to activate, press again to hide
 
-### ðŸŽ¬ OBS Control Tab
+### OBS Control Tab
 - Connect to OBS Studio via WebSocket (built into OBS 28+, no plugin needed)
 - Scene switching with clickable buttons
 - Source toggling â€” show/hide overlays, camera, chat widgets
@@ -23,7 +23,7 @@ Import characters, configure animated overlays, parse live dice rolls from Disco
 - Audio source mute/unmute
 - **Character-Linked Actions:** Activate a character â†’ OBS auto-switches scene + updates text source + toggles sources â€” all in one button press
 
-### ðŸ‘¥ PC Portraits Tab
+### PC Portraits Tab
 - Configurable player slots with per-player glow colors
 - Audio monitoring via OBS input sources (each player's Discord audio)
 - Active speaker gets a glowing highlight border, others dim + optional shade silhouette
@@ -31,7 +31,7 @@ Import characters, configure animated overlays, parse live dice rolls from Disco
 - All sliders: size, spacing, dim opacity, shade amount, per-player glow intensity
 - Same animation effects (bounce, pop-in, blink) as NPCs
 
-### ðŸŽ² Discord Bot Tab
+### Discord Bot Tab
 - Discord bot connects to your server and monitors channels in the background
 - **Dice Roll Overlay:** Parses Avrae / D&D Beyond roll messages and displays animated overlay cards on stream â€” character name, check type, dice formula, and total
 - NAT 20 â†’ gold glow + "NAT 20!" label; NAT 1 â†’ red glow + "NAT 1" label
