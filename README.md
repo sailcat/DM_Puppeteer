@@ -21,7 +21,7 @@ Import characters, configure animated overlays, parse live dice rolls from Disco
 - Source toggling â€” show/hide overlays, camera, chat widgets
 - Start/stop stream and recording controls
 - Audio source mute/unmute
-- **Character-Linked Actions:** Activate a character â†’ OBS auto-switches scene + updates text source + toggles sources â€” all in one button press
+- **Character-Linked Actions:** Activate a character OBS auto-switches scene + updates text source + toggles sources all in one button press
 
 ### PC Portraits Tab
 - Configurable player slots with per-player glow colors
@@ -34,7 +34,6 @@ Import characters, configure animated overlays, parse live dice rolls from Disco
 ### Discord Bot Tab
 - Discord bot connects to your server and monitors channels in the background
 - **Dice Roll Overlay:** Parses Avrae / D&D Beyond roll messages and displays animated overlay cards on stream â€” character name, check type, dice formula, and total
-- NAT 20 â†’ gold glow + "NAT 20!" label; NAT 1 â†’ red glow + "NAT 1" label
 - Character-matched colors (links to PC slot glow colors)
 - Configurable display time (2â€“15 seconds)
 - Roll log in the Discord tab shows recent rolls
@@ -61,9 +60,9 @@ python run.py
 ```
 
 ### 3. Create Characters
-1. Click **âž• New** in the control panel
+1. Click **New** in the control panel
 2. Type a character name and drag 4 PNG sprite frames onto the drop zones
-3. Click **ðŸ’¾ Save Character**
+3. Click **Save Character**
 
 Works for both NPCs and PCs â€” same character library, different tabs.
 
@@ -73,26 +72,26 @@ Works for both NPCs and PCs â€” same character library, different tabs.
 - Default hotkeys: Ctrl+Shift+1 through Ctrl+Shift+0
 
 ### 5. Per-Character Settings
-Right-click any character â†’ **Settings**:
+Right-click any character ’ **Settings**:
 - Scale, opacity, blink timing
 - Bounce/bob and pop-in animations
 - OBS Linked Actions (scene + text source + show/hide sources per character)
 
 ### 6. OBS Integration
-1. In OBS: **Tools â†’ WebSocket Server Settings â†’ Enable**
-2. In DM Puppeteer: **ðŸŽ¬ OBS Control** tab â†’ Connect
-3. Assign scenes to characters via right-click â†’ Settings
+1. In OBS: **Tools WebSocket Server Settings â†’ Enable**
+2. In DM Puppeteer: **OBS Control** tab Connect
+3. Assign scenes to characters via right-click Settings
 
 ### 7. PC Portraits
-1. In the **ðŸ‘¥ PC Portraits** tab, add player slots
+1. In the **PC Portraits** tab, add player slots
 2. Assign a character and OBS audio source to each
 3. Pick glow colors and adjust sensitivity
-4. Hit **Show Portraits** â€” speaking players light up
+4. Hit **Show Portraits** peaking players light up
 
 ### 8. Discord Bot (Dice Rolls)
 1. Create a Discord bot at [discord.com/developers](https://discord.com/developers/applications) with Message Content + Server Members intents enabled
-2. In the **ðŸŽ² Discord** tab, paste your bot token and roll channel ID
-3. Click **Connect** â€” dice rolls from Avrae will appear as animated overlay cards on stream
+2. In the **Discord** tab, paste your bot token and roll channel ID
+3. Click **Connect** dice rolls from Avrae will appear as animated overlay cards on stream
 4. The setup guide in the Discord tab walks through the full process
 
 ---
