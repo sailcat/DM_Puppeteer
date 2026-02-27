@@ -1,0 +1,19 @@
+# Core (required)
+PyQt6>=6.5.0
+sounddevice>=0.4.6
+numpy>=1.24.0
+pynput>=1.7.6
+
+# Stream Deck direct control (optional but recommended)
+streamdeck>=0.9.5
+hid>=1.0.5
+Pillow>=9.0.0
+
+# OBS Studio WebSocket control (optional)
+obsws-python>=1.6.0
+
+# Discord bot integration (optional)
+discord.py>=2.3.0
+
+# Building standalone exe
+pyinstaller>=5.0

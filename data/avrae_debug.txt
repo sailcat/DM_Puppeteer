@@ -1,0 +1,1511 @@
+
+============================================================
+TIMESTAMP: 2026-02-11T12:55:35.903794
+AUTHOR: zapuki. (ID: 741019038444159068, bot=False)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '!r d20'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:55:36.241081
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20 (8)\n**Total**: 8'
+EMBED COUNT: 0
+MENTIONS: [('Sailcat', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcat', check_type='Dice Roll', roll_formula='1d20 (8)', natural_roll=8, total=8, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20 (8)\n**Total**: 8')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:55:51.536389
+AUTHOR: zapuki. (ID: 741019038444159068, bot=False)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '!r d20'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:55:51.771624
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20 (18)\n**Total**: 18'
+EMBED COUNT: 0
+MENTIONS: [('Sailcat', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcat', check_type='Dice Roll', roll_formula='1d20 (18)', natural_roll=18, total=18, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20 (18)\n**Total**: 18')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:56:04.116496
+AUTHOR: zapuki. (ID: 741019038444159068, bot=False)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '!r d20'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:56:04.533057
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20 (16)\n**Total**: 16'
+EMBED COUNT: 0
+MENTIONS: [('Sailcat', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcat', check_type='Dice Roll', roll_formula='1d20 (16)', natural_roll=16, total=16, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20 (16)\n**Total**: 16')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:56:05.176594
+AUTHOR: zapuki. (ID: 741019038444159068, bot=False)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '!r d20'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:56:05.634349
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20 (4)\n**Total**: 4'
+EMBED COUNT: 0
+MENTIONS: [('Sailcat', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcat', check_type='Dice Roll', roll_formula='1d20 (4)', natural_roll=4, total=4, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20 (4)\n**Total**: 4')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:56:06.046356
+AUTHOR: zapuki. (ID: 741019038444159068, bot=False)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '!r d20'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:56:06.326327
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20 (9)\n**Total**: 9'
+EMBED COUNT: 0
+MENTIONS: [('Sailcat', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcat', check_type='Dice Roll', roll_formula='1d20 (9)', natural_roll=9, total=9, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20 (9)\n**Total**: 9')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:56:07.024650
+AUTHOR: zapuki. (ID: 741019038444159068, bot=False)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '!r d20'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:56:07.290189
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20 (2)\n**Total**: 2'
+EMBED COUNT: 0
+MENTIONS: [('Sailcat', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcat', check_type='Dice Roll', roll_formula='1d20 (2)', natural_roll=2, total=2, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20 (2)\n**Total**: 2')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:56:22.789591
+AUTHOR: zapuki. (ID: 741019038444159068, bot=False)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '!r d20mi20'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:56:23.181035
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20mi20 (**7 -> 20**)\n**Total**: 20'
+EMBED COUNT: 0
+MENTIONS: [('Sailcat', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcat', check_type='Dice Roll', roll_formula='1d20mi20 (**7 -> 20**)', natural_roll=20, total=20, is_critical=True, is_fumble=False, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20mi20 (**7 -> 20**)\n**Total**: 20')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:56:35.996793
+AUTHOR: zapuki. (ID: 741019038444159068, bot=False)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '!r d20ma1'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T12:56:36.280022
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20ma1 (**9 -> 1**)\n**Total**: 1'
+EMBED COUNT: 0
+MENTIONS: [('Sailcat', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcat', check_type='Dice Roll', roll_formula='1d20ma1 (**9 -> 1**)', natural_roll=1, total=1, is_critical=False, is_fumble=True, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20ma1 (**9 -> 1**)\n**Total**: 1')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T13:07:57.782369
+AUTHOR: zapuki. (ID: 741019038444159068, bot=False)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '!init s'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T13:07:57.990786
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: 'Error: save is a required argument that is missing.\nUse `!help init save` for help.'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T13:08:06.364298
+AUTHOR: zapuki. (ID: 741019038444159068, bot=False)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '!help init'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T13:08:06.705147
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: 'I have sent help to your PMs.'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T13:08:30.546296
+AUTHOR: zapuki. (ID: 741019038444159068, bot=False)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '!status'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T13:08:30.725805
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Conditions'
+  description: "**Blinded** - *You can't see*\n**Charmed** - *You are charmed*\n**Deafened** - *You can't hear*\n**Frightened** - *You are frightened*\n**Grappled** - *You are grappled*\n**Incapacitated** - *You can't take actions or reactions*\n**Invisible** - *You can't be seen*\n**Paralyzed** - *You are paralyzed*\n**Petrified** - *You are transformed into stone*\n**Poisoned** - *You are poisoned*\n**Prone** - *You are prone*\n**Restrained** - *You are restrained*\n**Stunned** - *You are stunned*\n**Unconscious** - *You are unconscious*\n**Exhaustion** - *You are exhausted*"
+  author:      EmbedProxy(icon_url='https://cdn.discordapp.com/avatars/741019038444159068/3891f47394e97253877e900c591d962b.png?size=1024', name='Sailcat', proxy_icon_url='https://images-ext-1.discordapp.net/external/aBPRh7YxpxNHzWJSSRA98EvSGH-_ibI2Y7ynmrCnkx0/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/741019038444159068/3891f47394e97253877e900c591d962b.png')
+    author.name: 'Sailcat'
+  footer:      EmbedProxy()
+  fields (0):
+  color:       <Colour value=12331106>
+  url:         None
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T13:08:56.887799
+AUTHOR: zapuki. (ID: 741019038444159068, bot=False)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '!status Sailcat'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T13:08:57.043876
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Multiple Matches Found'
+  description: 'Your input was: `Condition: Sailcat`\nWhich one were you looking for? (Type the number or `c` to cancel)\n**[1]** - Condition: Prone\n**[2]** - Condition: Invisible\n**[3]** - Condition: Charmed\n**[4]** - Condition: Stunned\n**[5]** - Condition: Restrained'
+  author:      EmbedProxy()
+  footer:      EmbedProxy()
+  fields (0):
+  color:       <Colour value=4767622>
+  url:         None
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-11T13:09:57.375867
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: 'Selection timed out or was cancelled.'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-12T00:44:14.154358
+AUTHOR: zapuki. (Sailcat) (ID: 741019038444159068, bot=False)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '!r d20'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-12T00:44:14.603910
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only🎲 (ID: 1470939391441768680)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20 (17)\n**Total**: 17'
+EMBED COUNT: 0
+MENTIONS: [('Sailcat', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcat', check_type='Dice Roll', roll_formula='1d20 (17)', natural_roll=17, total=17, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20 (17)\n**Total**: 17')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:02:29.030694
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne makes a Constitution check!'
+  description: '1d20 (16) + 3 = `19`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=8683912>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Seraphyne', check_type='Constitution check', roll_formula='1d20 (16) + 3 = 19', natural_roll=16, total=19, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (16) + 3 = `19`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:02:29.035469
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne makes a Constitution check!'
+  description: '1d20 (16) + 3 = `19`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=8683912>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Seraphyne', check_type='Constitution check', roll_formula='1d20 (16) + 3 = 19', natural_roll=16, total=19, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (16) + 3 = `19`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:02:49.236224
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne makes a Strength check!'
+  description: '1d20 (13) + 3 = `16`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=8220595>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Seraphyne', check_type='Strength check', roll_formula='1d20 (13) + 3 = 16', natural_roll=13, total=16, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (13) + 3 = `16`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:02:49.236728
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne makes a Strength check!'
+  description: '1d20 (13) + 3 = `16`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=8220595>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Seraphyne', check_type='Strength check', roll_formula='1d20 (13) + 3 = 16', natural_roll=13, total=16, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (13) + 3 = `16`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:03:16.601956
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@!341669727615320076> **rolled from** <:beyond:783780183559372890>:\n**Result**: 1d20 (5)\n**Total**: 5'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: DiceRollEvent(character_name='Unknown', check_type='Dice Roll', roll_formula='1d20 (5)', natural_roll=5, total=5, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@!341669727615320076> **rolled from** <:beyond:783780183559372890>:\n**Result**: 1d20 (5)\n**Total**: 5')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:03:16.603573
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@!341669727615320076> **rolled from** <:beyond:783780183559372890>:\n**Result**: 1d20 (5)\n**Total**: 5'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: DiceRollEvent(character_name='Unknown', check_type='Dice Roll', roll_formula='1d20 (5)', natural_roll=5, total=5, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@!341669727615320076> **rolled from** <:beyond:783780183559372890>:\n**Result**: 1d20 (5)\n**Total**: 5')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:06:17.264935
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20mi20 (**8 -> 20**)\n**Total**: 20'
+EMBED COUNT: 0
+MENTIONS: [('Sailcatherine', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcatherine', check_type='Dice Roll', roll_formula='1d20mi20 (**8 -> 20**)', natural_roll=20, total=20, is_critical=True, is_fumble=False, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20mi20 (**8 -> 20**)\n**Total**: 20')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:06:17.264935
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20mi20 (**8 -> 20**)\n**Total**: 20'
+EMBED COUNT: 0
+MENTIONS: [('Sailcatherine', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcatherine', check_type='Dice Roll', roll_formula='1d20mi20 (**8 -> 20**)', natural_roll=20, total=20, is_critical=True, is_fumble=False, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20mi20 (**8 -> 20**)\n**Total**: 20')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:06:25.306603
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20mi20 (**1 -> 20**)\n**Total**: 20'
+EMBED COUNT: 0
+MENTIONS: [('Sailcatherine', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcatherine', check_type='Dice Roll', roll_formula='1d20mi20 (**1 -> 20**)', natural_roll=20, total=20, is_critical=True, is_fumble=False, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20mi20 (**1 -> 20**)\n**Total**: 20')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:06:25.308256
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20mi20 (**1 -> 20**)\n**Total**: 20'
+EMBED COUNT: 0
+MENTIONS: [('Sailcatherine', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcatherine', check_type='Dice Roll', roll_formula='1d20mi20 (**1 -> 20**)', natural_roll=20, total=20, is_critical=True, is_fumble=False, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20mi20 (**1 -> 20**)\n**Total**: 20')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:06:36.453755
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20ma1 (**10 -> 1**)\n**Total**: 1'
+EMBED COUNT: 0
+MENTIONS: [('Sailcatherine', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcatherine', check_type='Dice Roll', roll_formula='1d20ma1 (**10 -> 1**)', natural_roll=1, total=1, is_critical=False, is_fumble=True, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20ma1 (**10 -> 1**)\n**Total**: 1')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:06:36.455286
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@741019038444159068>  :game_die:\n**Result**: 1d20ma1 (**10 -> 1**)\n**Total**: 1'
+EMBED COUNT: 0
+MENTIONS: [('Sailcatherine', 741019038444159068)]
+
+PARSE RESULT: DiceRollEvent(character_name='Sailcatherine', check_type='Dice Roll', roll_formula='1d20ma1 (**10 -> 1**)', natural_roll=1, total=1, is_critical=False, is_fumble=True, campaign_name='', raw_text='<@741019038444159068>  :game_die:\n**Result**: 1d20ma1 (**10 -> 1**)\n**Total**: 1')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:11:14.652890
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne makes a Constitution check!'
+  description: '1d20 (13) + 3 = `16`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=4525978>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Seraphyne', check_type='Constitution check', roll_formula='1d20 (13) + 3 = 16', natural_roll=13, total=16, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (13) + 3 = `16`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:11:14.652890
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne makes a Constitution check!'
+  description: '1d20 (13) + 3 = `16`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=4525978>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Seraphyne', check_type='Constitution check', roll_formula='1d20 (13) + 3 = 16', natural_roll=13, total=16, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (13) + 3 = `16`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:11:25.228343
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne makes a Charisma check!'
+  description: '1d20 (15) + 4 = `19`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=1626953>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Seraphyne', check_type='Charisma check', roll_formula='1d20 (15) + 4 = 19', natural_roll=15, total=19, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (15) + 4 = `19`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:11:25.228847
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne makes a Charisma check!'
+  description: '1d20 (15) + 4 = `19`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=1626953>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Seraphyne', check_type='Charisma check', roll_formula='1d20 (15) + 4 = 19', natural_roll=15, total=19, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (15) + 4 = `19`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:13:46.117920
+AUTHOR: raphdoesstuff (Raph) (ID: 341669727615320076, bot=False)
+CHANNEL: DND VC (ID: 1386390748785807460)
+CONTENT: 'https://apps.microsoft.com/detail/9nblggh4nk5g?hl=en-US&gl=US'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:13:46.119969
+AUTHOR: raphdoesstuff (Raph) (ID: 341669727615320076, bot=False)
+CHANNEL: DND VC (ID: 1386390748785807460)
+CONTENT: 'https://apps.microsoft.com/detail/9nblggh4nk5g?hl=en-US&gl=US'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:19:34.232680
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne attacks with a Javelin!'
+  description: None
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (2):
+    [0] name='Meta' value='**To Hit**: 1d20 (5) + 5 = `10`\n**Damage**: Waiting for roll...' inline=False
+    [1] name='Effect' value='Proficiency with a Javelin allows you to add your proficiency bonus to the attack roll for any attack you make with it.\n\n---\n\nThis weapon has the following mastery property. To use this property, you must have a feature that lets you use it.\n\n***Slow.*** If you hit a creature with this weapon and deal damage to it, you can reduce its Speed by 10 feet until the start of your next turn. If the creature is hit more than once by weapons that have this property, the Speed reduction doesn’t exceed 10 feet.' inline=False
+  color:       <Colour value=15044711>
+  url:         None
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:19:34.235218
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne attacks with a Javelin!'
+  description: None
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (2):
+    [0] name='Meta' value='**To Hit**: 1d20 (5) + 5 = `10`\n**Damage**: Waiting for roll...' inline=False
+    [1] name='Effect' value='Proficiency with a Javelin allows you to add your proficiency bonus to the attack roll for any attack you make with it.\n\n---\n\nThis weapon has the following mastery property. To use this property, you must have a feature that lets you use it.\n\n***Slow.*** If you hit a creature with this weapon and deal damage to it, you can reduce its Speed by 10 feet until the start of your next turn. If the creature is hit more than once by weapons that have this property, the Speed reduction doesn’t exceed 10 feet.' inline=False
+  color:       <Colour value=15044711>
+  url:         None
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:20:10.866583
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne casts Divine Smite!'
+  description: None
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (2):
+    [0] name='Meta' value='**Damage**: 2d8 (**1**, 2) = `3`' inline=False
+    [1] name='Effect' value='The target takes an extra 2d8 Radiant damage from the attack. The damage increases by 1d8 if the target is a Fiend or an Undead.' inline=False
+  color:       <Colour value=11763584>
+  url:         None
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:20:10.868087
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne casts Divine Smite!'
+  description: None
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (2):
+    [0] name='Meta' value='**Damage**: 2d8 (**1**, 2) = `3`' inline=False
+    [1] name='Effect' value='The target takes an extra 2d8 Radiant damage from the attack. The damage increases by 1d8 if the target is a Fiend or an Undead.' inline=False
+  color:       <Colour value=11763584>
+  url:         None
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:21:25.367281
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: 'Incorrect usage. Use !help init for help.'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-14T12:21:25.368805
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: 'Incorrect usage. Use !help init for help.'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T12:19:34.964891
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Theodore "Duke" Dumberry makes a Performance check!'
+  description: '1d20 (4) + 6 = `10`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=16614304>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Theodore "Duke" Dumberry', check_type='Performance check', roll_formula='1d20 (4) + 6 = 10', natural_roll=4, total=10, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (4) + 6 = `10`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T12:20:27.587000
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Lochlan Macrae makes a Performance check!'
+  description: '1d20 (2) + 2 = `4`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=5186860>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Lochlan Macrae', check_type='Performance check', roll_formula='1d20 (2) + 2 = 4', natural_roll=2, total=4, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (2) + 2 = `4`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T12:21:33.985042
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Lochlan Macrae makes a Deception check!'
+  description: '1d20 (14) + 6 = `20`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=3060771>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Lochlan Macrae', check_type='Deception check', roll_formula='1d20 (14) + 6 = 20', natural_roll=14, total=20, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (14) + 6 = `20`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T12:30:37.798300
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne makes a Deception check!'
+  description: '1d20 (**20**) + 6 = `26`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=1698272>
+  url:         None
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T12:30:39.549511
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Lochlan Macrae makes a Deception check!'
+  description: '1d20 (5) + 6 = `11`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=5528637>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Lochlan Macrae', check_type='Deception check', roll_formula='1d20 (5) + 6 = 11', natural_roll=5, total=11, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (5) + 6 = `11`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T12:45:35.107080
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Theodore "Duke" Dumberry makes a History check!'
+  description: '1d20 (7) + 5 = `12`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=16480614>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Theodore "Duke" Dumberry', check_type='History check', roll_formula='1d20 (7) + 5 = 12', natural_roll=7, total=12, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (7) + 5 = `12`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T13:29:11.916822
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Theodore "Duke" Dumberry makes a Persuasion check!'
+  description: '1d20 (13) + 6 = `19`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=3473533>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Theodore "Duke" Dumberry', check_type='Persuasion check', roll_formula='1d20 (13) + 6 = 19', natural_roll=13, total=19, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (13) + 6 = `19`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T13:29:12.587119
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Lochlan Macrae makes a Persuasion check!'
+  description: '1d20 (16) + 2 = `18`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=3008535>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Lochlan Macrae', check_type='Persuasion check', roll_formula='1d20 (16) + 2 = 18', natural_roll=16, total=18, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (16) + 2 = `18`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T13:29:12.770473
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne makes a Performance check!'
+  description: '1d20 (7) + 6 = `13`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=10384974>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Seraphyne', check_type='Performance check', roll_formula='1d20 (7) + 6 = 13', natural_roll=7, total=13, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (7) + 6 = `13`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T13:42:08.310385
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne makes a Perception check!'
+  description: '1d20 (10) = `10`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=5102297>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Seraphyne', check_type='Perception check', roll_formula='1d20 (10) = 10', natural_roll=10, total=10, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (10) = `10`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T13:42:11.207533
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Lochlan Macrae makes a Perception check!'
+  description: '1d20 (18) + 1 = `19`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=6217717>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Lochlan Macrae', check_type='Perception check', roll_formula='1d20 (18) + 1 = 19', natural_roll=18, total=19, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (18) + 1 = `19`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T13:43:16.028156
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Lochlan Macrae makes a Stealth check!'
+  description: '1d20 (17) + 8 = `25`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=13297465>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Lochlan Macrae', check_type='Stealth check', roll_formula='1d20 (17) + 8 = 25', natural_roll=17, total=25, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (17) + 8 = `25`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T14:15:07.453877
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Theodore "Duke" Dumberry makes a Constitution check!'
+  description: '1d20 (19) + 2 = `21`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=15719984>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Theodore "Duke" Dumberry', check_type='Constitution check', roll_formula='1d20 (19) + 2 = 21', natural_roll=19, total=21, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (19) + 2 = `21`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T14:16:33.409571
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Theodore "Duke" Dumberry makes a History check!'
+  description: '1d20 (19) + 5 = `24`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=2496213>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Theodore "Duke" Dumberry', check_type='History check', roll_formula='1d20 (19) + 5 = 24', natural_roll=19, total=24, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (19) + 5 = `24`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T14:26:22.649933
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Lochlan Macrae makes a Stealth check!'
+  description: '1d20 (19) + 8 = `27`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=1591883>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Lochlan Macrae', check_type='Stealth check', roll_formula='1d20 (19) + 8 = 27', natural_roll=19, total=27, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (19) + 8 = `27`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T14:27:13.693531
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Lochlan Macrae makes a Sleight Of Hand check!'
+  description: '1d20 (15) + 6 = `21`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=10266208>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Lochlan Macrae', check_type='Sleight Of Hand check', roll_formula='1d20 (15) + 6 = 21', natural_roll=15, total=21, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (15) + 6 = `21`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T14:30:41.379298
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne makes an Insight check!'
+  description: '1d20 (7) = `7`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=3379134>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Seraphyne', check_type='Insight check', roll_formula='1d20 (7) = 7', natural_roll=7, total=7, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (7) = `7`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T14:30:52.147783
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Theodore "Duke" Dumberry makes an Insight check!'
+  description: '1d20 (19) + 2 = `21`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=8992464>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Theodore "Duke" Dumberry', check_type='Insight check', roll_formula='1d20 (19) + 2 = 21', natural_roll=19, total=21, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (19) + 2 = `21`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T14:31:02.969732
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Lochlan Macrae makes a Deception check!'
+  description: '1d20 (**1**) + 6 = `7`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=16237065>
+  url:         None
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T14:39:10.851957
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@!380543824843243531> **rolled from** <:beyond:783780183559372890>:\n**Result**: 1d20 (12)\n**Total**: 12'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: DiceRollEvent(character_name='Unknown', check_type='Dice Roll', roll_formula='1d20 (12)', natural_roll=12, total=12, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@!380543824843243531> **rolled from** <:beyond:783780183559372890>:\n**Result**: 1d20 (12)\n**Total**: 12')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T14:39:57.850308
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Theodore "Duke" Dumberry makes a Persuasion check!'
+  description: '2d20kh1 (~~10~~, **20**) + 6 = `26`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=8666454>
+  url:         None
+
+PARSE RESULT: None (parser returned nothing)
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T14:40:56.153248
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Lochlan Macrae makes a Stealth check!'
+  description: '1d20 (15) + 8 = `23`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=9012573>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Lochlan Macrae', check_type='Stealth check', roll_formula='1d20 (15) + 8 = 23', natural_roll=15, total=23, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (15) + 8 = `23`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T14:51:35.735139
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@!380543824843243531> **rolled from** <:beyond:783780183559372890>:\n**Result**: 1d20 (**20**)\n**Total**: 20'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: DiceRollEvent(character_name='Unknown', check_type='Dice Roll', roll_formula='1d20 (**20**)', natural_roll=0, total=20, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@!380543824843243531> **rolled from** <:beyond:783780183559372890>:\n**Result**: 1d20 (**20**)\n**Total**: 20')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:04:07.336168
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne makes a Performance check!'
+  description: '1d20 (3) + 6 = `9`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=10100587>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Seraphyne', check_type='Performance check', roll_formula='1d20 (3) + 6 = 9', natural_roll=3, total=9, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (3) + 6 = `9`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:04:17.799739
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Seraphyne makes a Performance check!'
+  description: '1d20 (8) + 6 = `14`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=9018118>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Seraphyne', check_type='Performance check', roll_formula='1d20 (8) + 6 = 14', natural_roll=8, total=14, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (8) + 6 = `14`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:05:57.757620
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Lochlan Macrae makes a Perception check!'
+  description: '1d20 (7) + 1 = `8`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=1062744>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Lochlan Macrae', check_type='Perception check', roll_formula='1d20 (7) + 1 = 8', natural_roll=7, total=8, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (7) + 1 = `8`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:06:10.514431
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Lochlan Macrae makes a Perception check!'
+  description: '1d20 (10) + 1 = `11`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=1330719>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Lochlan Macrae', check_type='Perception check', roll_formula='1d20 (10) + 1 = 11', natural_roll=10, total=11, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (10) + 1 = `11`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:10:34.308647
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Lochlan Macrae makes a Stealth check!'
+  description: '1d20 (17) + 8 = `25`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=3198690>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Lochlan Macrae', check_type='Stealth check', roll_formula='1d20 (17) + 8 = 25', natural_roll=17, total=25, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (17) + 8 = `25`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:12:30.250625
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Lochlan Macrae makes a Perception check!'
+  description: '1d20 (11) + 1 = `12`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=4945386>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Lochlan Macrae', check_type='Perception check', roll_formula='1d20 (11) + 1 = 12', natural_roll=11, total=12, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (11) + 1 = `12`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:24:31.743395
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 2d6 (**1**, 4)\n**Total**: 5'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: DiceRollEvent(character_name='Unknown', check_type='Dice Roll', roll_formula='2d6 (**1**, 4)', natural_roll=0, total=5, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 2d6 (**1**, 4)\n**Total**: 5')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:25:09.055719
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 2d6 (5, 4)\n**Total**: 9'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: DiceRollEvent(character_name='Unknown', check_type='Dice Roll', roll_formula='2d6 (5, 4)', natural_roll=0, total=9, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 2d6 (5, 4)\n**Total**: 9')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:25:37.381707
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 2d6 (**6**, 5)\n**Total**: 11'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: DiceRollEvent(character_name='Unknown', check_type='Dice Roll', roll_formula='2d6 (**6**, 5)', natural_roll=0, total=11, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 2d6 (**6**, 5)\n**Total**: 11')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:26:12.506585
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 2d6 (3, 2)\n**Total**: 5'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: DiceRollEvent(character_name='Unknown', check_type='Dice Roll', roll_formula='2d6 (3, 2)', natural_roll=0, total=5, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 2d6 (3, 2)\n**Total**: 5')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:27:40.179320
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 2d6 (5, **6**)\n**Total**: 11'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: DiceRollEvent(character_name='Unknown', check_type='Dice Roll', roll_formula='2d6 (5, **6**)', natural_roll=0, total=11, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 2d6 (5, **6**)\n**Total**: 11')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:28:27.921684
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 2d6 (4, **6**)\n**Total**: 10'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: DiceRollEvent(character_name='Unknown', check_type='Dice Roll', roll_formula='2d6 (4, **6**)', natural_roll=0, total=10, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 2d6 (4, **6**)\n**Total**: 10')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:29:09.028804
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 2d6 (4, **1**)\n**Total**: 5'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: DiceRollEvent(character_name='Unknown', check_type='Dice Roll', roll_formula='2d6 (4, **1**)', natural_roll=0, total=5, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 2d6 (4, **1**)\n**Total**: 5')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:32:06.752199
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Theodore "Duke" Dumberry makes a Constitution Save!'
+  description: '1d20 (13) + 4 = `17`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=4887518>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Theodore "Duke" Dumberry', check_type='Constitution Save', roll_formula='1d20 (13) + 4 = 17', natural_roll=13, total=17, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (13) + 4 = `17`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:32:35.856961
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Theodore "Duke" Dumberry makes a Constitution Save!'
+  description: '1d20 (9) + 4 = `13`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=5019576>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Theodore "Duke" Dumberry', check_type='Constitution Save', roll_formula='1d20 (9) + 4 = 13', natural_roll=9, total=13, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (9) + 4 = `13`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:33:00.419755
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Theodore "Duke" Dumberry makes a Constitution Save!'
+  description: '1d20 (5) + 4 = `9`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=11552985>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Theodore "Duke" Dumberry', check_type='Constitution Save', roll_formula='1d20 (5) + 4 = 9', natural_roll=5, total=9, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (5) + 4 = `9`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:33:29.825808
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Theodore "Duke" Dumberry makes a Constitution Save!'
+  description: '1d20 (11) + 4 = `15`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=11462211>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Theodore "Duke" Dumberry', check_type='Constitution Save', roll_formula='1d20 (11) + 4 = 15', natural_roll=11, total=15, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (11) + 4 = `15`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:33:45.316520
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Theodore "Duke" Dumberry makes a Constitution Save!'
+  description: '1d20 (4) + 4 = `8`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=13904570>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Theodore "Duke" Dumberry', check_type='Constitution Save', roll_formula='1d20 (4) + 4 = 8', natural_roll=4, total=8, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (4) + 4 = `8`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:33:55.909263
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: ''
+EMBED COUNT: 1
+MENTIONS: []
+
+--- EMBED 0 ---
+  title:       'Theodore "Duke" Dumberry makes a Constitution Save!'
+  description: '1d20 (10) + 4 = `14`'
+  author:      None
+  footer:      <EmbedFooter text='Rolled in Okora on the Edge' icon_url='https://cdn.discordapp.com/emojis/783780183559372890.png?v=1'>
+    footer.text: 'Rolled in Okora on the Edge'
+  fields (0):
+  color:       <Colour value=5303790>
+  url:         None
+
+PARSE RESULT: DiceRollEvent(character_name='Theodore "Duke" Dumberry', check_type='Constitution Save', roll_formula='1d20 (10) + 4 = 14', natural_roll=10, total=14, is_critical=False, is_fumble=False, campaign_name='Okora on the Edge', raw_text='1d20 (10) + 4 = `14`')
+============================================================
+
+============================================================
+TIMESTAMP: 2026-02-21T15:40:41.371697
+AUTHOR: Avrae#6944 (ID: 261302296103747584, bot=True)
+CHANNEL: dice-rolls-only (ID: 1388969655816687737)
+CONTENT: '<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 1d4 (2)\n**Total**: 2'
+EMBED COUNT: 0
+MENTIONS: []
+
+PARSE RESULT: DiceRollEvent(character_name='Unknown', check_type='Dice Roll', roll_formula='1d4 (2)', natural_roll=2, total=2, is_critical=False, is_fumble=False, campaign_name='', raw_text='<@!741019038444159068> **rolled from** <:beyond:783780183559372890>:\n**Result**: 1d4 (2)\n**Total**: 2')
+============================================================
