@@ -132,8 +132,8 @@
   "active_character_id": "7b6d5d05",
   "mic_threshold": 0.011,
   "mic_device": 52,
-  "overlay_x": 185,
-  "overlay_y": 68,
+  "overlay_x": 1421,
+  "overlay_y": 969,
   "deck_mode": "direct",
   "deck_brightness": 80,
   "obs_host": "localhost",
@@ -156,7 +156,9 @@
       "voice_attack_ms": 50,
       "voice_decay_ms": 250,
       "voice_smoothing": 0.3,
-      "voice_adaptive_multiplier": 2.5
+      "voice_adaptive_multiplier": 2.5,
+      "dice_pack": "",
+      "dice_color": ""
     },
     {
       "id": "3c7cfa24",
@@ -173,15 +175,17 @@
       "voice_attack_ms": 50,
       "voice_decay_ms": 250,
       "voice_smoothing": 0.3,
-      "voice_adaptive_multiplier": 2.5
+      "voice_adaptive_multiplier": 2.5,
+      "dice_pack": "",
+      "dice_color": ""
     },
     {
       "id": "144d5b4c",
-      "character_id": "b6704139",
+      "character_id": "097d03c4",
       "obs_audio_source": "",
       "glow_color": "#00cc66",
       "glow_intensity": 1.0,
-      "audio_threshold": 0.02,
+      "audio_threshold": 0.011,
       "player_name": "Cornelia",
       "individual_x": -1,
       "individual_y": -1,
@@ -190,7 +194,9 @@
       "voice_attack_ms": 50,
       "voice_decay_ms": 250,
       "voice_smoothing": 0.3,
-      "voice_adaptive_multiplier": 2.5
+      "voice_adaptive_multiplier": 2.5,
+      "dice_pack": "",
+      "dice_color": ""
     },
     {
       "id": "afb7340b",
@@ -207,7 +213,9 @@
       "voice_attack_ms": 50,
       "voice_decay_ms": 250,
       "voice_smoothing": 0.3,
-      "voice_adaptive_multiplier": 2.5
+      "voice_adaptive_multiplier": 2.5,
+      "dice_pack": "",
+      "dice_color": ""
     }
   ],
   "pc_overlay_mode": "strip",
@@ -217,13 +225,16 @@
   "pc_portrait_size": 230,
   "pc_dim_opacity": 1.0,
   "pc_shade_amount": 0.5,
+  "discord_token": "",
   "discord_roll_channel_id": 1386390748785807460,
   "discord_auto_connect": true,
-  "dice_overlay_x": 45,
-  "dice_overlay_y": 160,
+  "dice_overlay_x": 350,
+  "dice_overlay_y": 413,
   "dice_display_time": 6.0,
   "dice_side": "left",
   "dice_stack": "top",
+  "dice_display_mode": "dice_and_card",
+  "dice_default_pack": "classic",
   "discord_voice_channel_id": 1386390748785807460,
   "combat": {
     "combatants": [
@@ -473,7 +484,7 @@
       "times_used": 1
     }
   ],
-  "initiative_overlay_x": 63,
-  "initiative_overlay_y": 13,
+  "initiative_overlay_x": 1637,
+  "initiative_overlay_y": 81,
   "initiative_overlay_visible": true
 }

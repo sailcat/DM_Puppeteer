@@ -1,5 +1,4 @@
-"""
-Discord Bot Bridge.
+"""Discord Bot Bridge.
 
 Runs a Discord bot in a background thread and bridges events
 to the Qt main thread via signals. Monitors:
@@ -84,17 +83,17 @@ class AvraeParser:
 
     Handles two real Avrae formats:
 
-    Format 1 â€” Bare rolls (!r d20, !r 1d20+5):
+    Format 1 -- Bare rolls (!r d20, !r 1d20+5):
         Plain text, no embeds.
         '<@USER_ID>  :game_die:\\n**Result**: 1d20 (15) + 5\\n**Total**: 20'
 
-    Format 2 â€” Character-linked rolls (!check dex, !save wis, !attack):
+    Format 2 -- Character-linked rolls (!check dex, !save wis, !attack):
         Embed, no content.
         title:       'Human Fighter makes a Dexterity check!'
         description: '1d20 (16) + 1 = `17`'
         footer.text: 'Rolled in Campaign Name'
     """
-
+    
     AVRAE_BOT_ID = 261302296103747584
 
     CHECK_PATTERN = re.compile(
@@ -245,7 +244,7 @@ class _DiscordBotRunner:
         self._voice_sink = None
         self._player_map: Dict[int, int] = {}  # discord_user_id -> slot_index
 
-        # Command queue â€” main thread sends commands to bot thread
+        # Command queue -- main thread sends commands to bot thread
         self._command_queue: queue.Queue = queue.Queue()
 
     def run(self):
@@ -408,7 +407,7 @@ class _DiscordBotRunner:
             self.event_queue.put(("dice_roll", event))
 
     # ------------------------------------------------------------------
-    # Voice receive â€” join/leave/manage
+    # Voice receive -- join/leave/manage
     # ------------------------------------------------------------------
 
     async def join_voice_channel(self, channel_id: int, player_map: Dict[int, int]):
@@ -610,14 +609,14 @@ class _DiscordBotRunner:
 class DiscordBridge(QObject):
     """Bridges Discord bot events to the Qt main thread."""
 
-    # Signals â€” existing
+    # Signals -- existing
     connection_changed = pyqtSignal(bool, str)    # connected, info
     dice_roll = pyqtSignal(object)                # DiceRollEvent
     voice_state = pyqtSignal(object)              # VoiceStateEvent
     command_received = pyqtSignal(object)          # CommandEvent
     error_occurred = pyqtSignal(str)
 
-    # Signals â€” voice receive
+    # Signals -- voice receive
     player_audio_update = pyqtSignal(int, float, str, float)  # slot_index, rms, vowel, threshold
     voice_connected = pyqtSignal(dict)                  # channel info
     voice_disconnected = pyqtSignal()
@@ -737,7 +736,7 @@ class DiscordBridge(QObject):
                 info = data
                 self.connection_changed.emit(
                     True,
-                    f"{info['bot_name']} â€” {info['guild_count']} server(s)")
+                    f"{info['bot_name']} -- {info['guild_count']} server(s)")
 
             elif event_type == "dice_roll":
                 self.dice_roll.emit(data)

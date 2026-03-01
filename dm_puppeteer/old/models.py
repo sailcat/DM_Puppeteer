@@ -321,6 +321,7 @@ class Combatant:
         self.ac = 0
         self.is_player = False         # True = PC, False = NPC/monster
         self.pc_slot_id = ""           # links to PCSlot if is_player
+        self.character_id = ""         # links to Character for portrait lookup
         self.token_path = ""           # path to circular token image
         self.token_color = "#666666"   # fallback ring color if no token
         self.conditions: list[str] = []
@@ -368,6 +369,7 @@ class Combatant:
             "ac": self.ac,
             "is_player": self.is_player,
             "pc_slot_id": self.pc_slot_id,
+            "character_id": self.character_id,
             "token_path": self.token_path,
             "token_color": self.token_color,
             "conditions": self.conditions.copy(),
@@ -389,6 +391,7 @@ class Combatant:
         c.ac = data.get("ac", 0)
         c.is_player = data.get("is_player", False)
         c.pc_slot_id = data.get("pc_slot_id", "")
+        c.character_id = data.get("character_id", "")
         c.token_path = data.get("token_path", "")
         c.token_color = data.get("token_color", "#666666")
         c.conditions = data.get("conditions", [])

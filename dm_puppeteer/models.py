@@ -220,6 +220,10 @@ class PCSlot:
         self.voice_smoothing: float = 0.3    # RMS smoothing factor (0=no smoothing, 1=raw)
         self.voice_adaptive_multiplier: float = 2.5  # adaptive threshold sensitivity
 
+        # Dice display (Brief 005)
+        self.dice_pack: str = ""             # pack folder name, empty = use global default
+        self.dice_color: str = ""            # color variant name, empty = auto from glow_color
+
     def to_dict(self):
         return {
             "id": self.id,
@@ -237,6 +241,8 @@ class PCSlot:
             "voice_decay_ms": self.voice_decay_ms,
             "voice_smoothing": self.voice_smoothing,
             "voice_adaptive_multiplier": self.voice_adaptive_multiplier,
+            "dice_pack": self.dice_pack,
+            "dice_color": self.dice_color,
         }
 
     @classmethod
@@ -256,6 +262,8 @@ class PCSlot:
         s.voice_decay_ms = data.get("voice_decay_ms", 250)
         s.voice_smoothing = data.get("voice_smoothing", 0.3)
         s.voice_adaptive_multiplier = data.get("voice_adaptive_multiplier", 2.5)
+        s.dice_pack = data.get("dice_pack", "")
+        s.dice_color = data.get("dice_color", "")
         return s
 
 
@@ -579,6 +587,8 @@ class AppState:
         self.dice_display_time: float = 6.0
         self.dice_side: str = "left"       # "left" or "right"
         self.dice_stack: str = "top"       # "top" or "bottom"
+        self.dice_display_mode: str = "dice_and_card"  # "dice_only", "card_only", "dice_and_card"
+        self.dice_default_pack: str = "classic"
 
         # Discord voice receive settings (NEW -- Phase 3.5)
         self.discord_voice_channel_id: int = 0
@@ -653,6 +663,8 @@ class AppState:
             "dice_display_time": self.dice_display_time,
             "dice_side": self.dice_side,
             "dice_stack": self.dice_stack,
+            "dice_display_mode": self.dice_display_mode,
+            "dice_default_pack": self.dice_default_pack,
             "discord_voice_channel_id": self.discord_voice_channel_id,
             "combat": self.combat.to_dict(),
             "bestiary": [b.to_dict() for b in self.bestiary],
@@ -724,6 +736,8 @@ class AppState:
         state.dice_display_time = data.get("dice_display_time", 6.0)
         state.dice_side = data.get("dice_side", "left")
         state.dice_stack = data.get("dice_stack", "top")
+        state.dice_display_mode = data.get("dice_display_mode", "dice_and_card")
+        state.dice_default_pack = data.get("dice_default_pack", "classic")
         state.discord_voice_channel_id = data.get("discord_voice_channel_id", 0)
 
         # Combat state (Phase 5)

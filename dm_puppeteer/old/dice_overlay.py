@@ -23,11 +23,8 @@ from PyQt6.QtGui import (
 
 from .discord_bot import DiceRollEvent
 from .dice_effects import (
-    ParticleEmitter, ScreenShake, D20Flash, Particle, DiceSprite,
-    trigger_nat20_effect, trigger_nat1_effect
+    ParticleEmitter, ScreenShake, D20Flash, Particle
 )
-from .dice_assets import DicePackLoader
-from .models import get_data_dir
 
 
 class DiceRollCard:
@@ -58,22 +55,13 @@ class DiceRollCard:
         self._explode_start = 0.0
         self._explode_triggered = False
 
-        # --- Card display delay (for dice_and_card mode) ---
-        self._delay = 0.0    # seconds to wait before entering
-
     def update(self, display_time: float = 6.0, dt: float = 0.033):
         """Update animation state. Returns True if still alive."""
         age = time.monotonic() - self.created
 
-        # Wait for delay before starting enter animation
-        if self._delay > 0 and age < self._delay:
-            return True   # alive but not visible yet
-
-        effective_age = age - self._delay
-
         if self.phase == "enter":
             # Slide in + fade in over 0.4s
-            t = min(effective_age / 0.4, 1.0)
+            t = min(age / 0.4, 1.0)
             ease = 1.0 - (1.0 - t) ** 3  # ease-out cubic
             self.slide_x = self._start_x * (1.0 - ease)
             self.opacity = ease
@@ -83,7 +71,7 @@ class DiceRollCard:
                 self.opacity = 1.0
 
         elif self.phase == "hold":
-            hold_start = self._delay + 0.4
+            hold_start = 0.4
             # Crits/fumbles get shorter hold before their special exit
             if self.event.is_critical or self.event.is_fumble:
                 hold_duration = min(display_time, 2.5)
@@ -178,11 +166,9 @@ class DiceRollOverlay(QMainWindow):
     CARD_SPACING = 8
     MAX_VISIBLE = 4
 
-    def __init__(self, state=None, x=50, y=50):
+    def __init__(self, x=50, y=50):
         super().__init__()
-        self.state = state
         self.cards: list[DiceRollCard] = []
-        self.dice_sprites: list[DiceSprite] = []
         self._display_time = 6.0
         self._drag_pos = None
 
@@ -199,9 +185,6 @@ class DiceRollOverlay(QMainWindow):
         self.screen_shake = ScreenShake()
         self._base_pos = None  # stored position for shake offset
 
-        # --- Dice pack loader ---
-        self.pack_loader = DicePackLoader(get_data_dir())
-
         self.setWindowTitle("DM Puppeteer - Dice Rolls")
         self.setWindowFlags(
             Qt.WindowType.FramelessWindowHint |
@@ -209,7 +192,9 @@ class DiceRollOverlay(QMainWindow):
             Qt.WindowType.Tool
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        self._apply_sizing()
+        # Extra height/width for particles that fly beyond cards
+        self.resize(self.CARD_WIDTH + 120,
+                    self.MAX_VISIBLE * (self.CARD_HEIGHT + self.CARD_SPACING) + 200)
         self.move(x, y)
 
         self.canvas = _DiceCanvas(self)
@@ -218,33 +203,6 @@ class DiceRollOverlay(QMainWindow):
         self.render_timer = QTimer(self)
         self.render_timer.timeout.connect(self._tick)
         self.render_timer.start(33)
-
-    def _apply_sizing(self):
-        """Set overlay window size based on display mode."""
-        mode = self._get_display_mode()
-        if mode == "card_only":
-            width = self.CARD_WIDTH + 120
-            height = (self.MAX_VISIBLE
-                      * (self.CARD_HEIGHT + self.CARD_SPACING) + 200)
-        elif mode == "dice_only":
-            width = 500
-            height = 400
-        else:  # dice_and_card
-            width = max(500, self.CARD_WIDTH + 120)
-            height = (400 + self.MAX_VISIBLE
-                      * (self.CARD_HEIGHT + self.CARD_SPACING))
-        self.resize(width, height)
-
-    def _get_display_mode(self) -> str:
-        """Get current display mode from state, with fallback."""
-        if self.state:
-            return self.state.dice_display_mode
-        return "dice_and_card"
-
-    def set_state(self, state):
-        """Link to AppState for display mode and PC slot preferences."""
-        self.state = state
-        self._apply_sizing()
 
     def set_display_time(self, seconds: float):
         self._display_time = max(1.0, seconds)
@@ -258,129 +216,24 @@ class DiceRollOverlay(QMainWindow):
         self._stack = stack if stack in ("top", "bottom") else "top"
 
     def add_roll(self, event: DiceRollEvent):
-        """Add a new dice roll to display.
-
-        Creates dice sprites and/or roll cards depending on
-        the current display mode (dice_only, card_only, dice_and_card).
-        """
-        # Find color, pack, and dice color for this character
+        """Add a new dice roll to display."""
+        # Find color for this character
         color = "#00cc66"
-        pack_name = self.state.dice_default_pack if self.state else "classic"
-        dice_color = "red"
         name_lower = event.character_name.lower()
+        for key, c in self.character_colors.items():
+            if key.lower() in name_lower or name_lower in key.lower():
+                color = c
+                break
 
-        # Try PC slot lookup for pack/color preferences
-        if self.state:
-            for slot in self.state.pc_slots:
-                from .models import Character
-                char = self.state.characters.get(slot.character_id)
-                if not char:
-                    continue
-                slot_name = (slot.player_name or char.name).lower()
-                if slot_name in name_lower or name_lower in slot_name:
-                    color = slot.glow_color
-                    pack_name = (slot.dice_pack
-                                 or self.state.dice_default_pack)
-                    dice_color = (slot.dice_color
-                                  or self._glow_to_dice_color(
-                                      slot.glow_color))
-                    break
+        card = DiceRollCard(event, color, slide_from=self._side)
+        self.cards.append(card)
 
-        # Fallback: use character_colors dict (legacy path)
-        if color == "#00cc66":
-            for key, c in self.character_colors.items():
-                if key.lower() in name_lower or name_lower in key.lower():
-                    color = c
-                    dice_color = self._glow_to_dice_color(c)
-                    break
-
-        mode = self._get_display_mode()
-
-        # --- Dice sprite(s) ---
-        if mode in ("dice_only", "dice_and_card"):
-            land_x, land_y = self._random_landing_position()
-
-            # Resolve pack -- fallback to placeholder if pack not found
-            available = self.pack_loader.available_packs()
-            if pack_name not in available:
-                pack_name = (available[0] if available
-                             else DicePackLoader.PLACEHOLDER_PACK)
-
-            # Primary die
-            sprite = DiceSprite(
-                result=event.natural_roll or event.total,
-                die_type=event.die_type,
-                pack_loader=self.pack_loader,
-                pack_name=pack_name,
-                color=dice_color,
-                landing_x=land_x,
-                landing_y=land_y,
-                entry_edge=self._side,
-            )
-
-            # Crits/fumbles get extended hold for dramatic effect
-            if event.is_critical or event.is_fumble:
-                sprite._hold_duration_override = 2.0
-
-            self.dice_sprites.append(sprite)
-
-            # Secondary die for advantage/disadvantage
-            if event.is_advantage or event.is_disadvantage:
-                land_x2 = land_x + DiceSprite.DIE_SIZE + 20
-                land_y2 = land_y + random.uniform(-15, 15)
-                secondary = DiceSprite(
-                    result=event.secondary_roll,
-                    die_type="d20",
-                    pack_loader=self.pack_loader,
-                    pack_name=pack_name,
-                    color=dice_color,
-                    landing_x=land_x2,
-                    landing_y=land_y2,
-                    entry_edge=self._side,
-                )
-                secondary._is_secondary = True
-                self.dice_sprites.append(secondary)
-
-        # --- Roll card (existing system) ---
-        if mode in ("card_only", "dice_and_card"):
-            card = DiceRollCard(event, color, slide_from=self._side)
-            if mode == "dice_and_card":
-                # Delay card entry until die settles
-                card._delay = 1.8
-            self.cards.append(card)
-
-        # Trim old
+        # Trim old cards
         while len(self.cards) > self.MAX_VISIBLE + 2:
             self.cards.pop(0)
-        while len(self.dice_sprites) > 6:
-            self.dice_sprites.pop(0)
 
     def _tick(self):
         dt = 0.033
-
-        # Update dice sprites and trigger crit/fumble effects
-        for sprite in self.dice_sprites:
-            was_holding = (sprite.phase == "hold")
-            sprite.update(dt, self._display_time)
-
-            # Trigger NAT 20/NAT 1 exit effects when hold phase ends
-            # (the sprite's own update transitions from hold -> exit;
-            # we intercept to override with explode/shatter instead)
-            if was_holding and sprite.phase == "exit":
-                if (sprite.result == 20 and sprite.die_type == "d20"
-                        and not sprite._is_secondary):
-                    sprite.trigger_explode()
-                    self.d20_flash = trigger_nat20_effect(
-                        self.emitter, sprite.x, sprite.y)
-                elif (sprite.result == 1 and sprite.die_type == "d20"
-                      and not sprite._is_secondary):
-                    sprite.trigger_shatter()
-                    self.d20_flash = trigger_nat1_effect(
-                        self.emitter, sprite.x, sprite.y)
-                    self.screen_shake.trigger(intensity=8)
-
-        self.dice_sprites = [s for s in self.dice_sprites
-                             if not s.is_finished]
 
         # Update all cards and trigger effects on phase transitions
         for card in self.cards:
@@ -443,18 +296,13 @@ class DiceRollOverlay(QMainWindow):
             base_x = 10
         x = base_x + int(card.slide_x)
 
-        # Y offset for dice_and_card mode
-        mode = self._get_display_mode()
-        card_area_top = 400 if mode == "dice_and_card" else 0
-
         # Y position
         if self._stack == "bottom":
             total_h = self.MAX_VISIBLE * (self.CARD_HEIGHT + self.CARD_SPACING)
-            y = card_area_top + 10 + total_h \
-                - (self.CARD_HEIGHT + self.CARD_SPACING) \
+            y = 10 + total_h - (self.CARD_HEIGHT + self.CARD_SPACING) \
                 - idx * (self.CARD_HEIGHT + self.CARD_SPACING)
         else:
-            y = card_area_top + 10 + idx * (self.CARD_HEIGHT + self.CARD_SPACING)
+            y = 10 + idx * (self.CARD_HEIGHT + self.CARD_SPACING)
 
         return x, y, self.CARD_WIDTH, self.CARD_HEIGHT
 
@@ -553,58 +401,6 @@ class DiceRollOverlay(QMainWindow):
         # Screen shake
         self.screen_shake.trigger(intensity=10)
 
-    # --- Dice sprite helpers ---
-
-    def _random_landing_position(self) -> tuple:
-        """Calculate a randomized landing position for a dice sprite.
-
-        Lands in the upper portion of the overlay (above cards).
-        """
-        margin = DiceSprite.DIE_SIZE
-        w = self.canvas.width()
-        mode = self._get_display_mode()
-        if mode == "dice_only":
-            h = self.canvas.height()
-        else:
-            # dice_and_card: land in the upper 400px zone
-            h = 400
-        x = random.uniform(margin, max(margin + 1, w - margin * 2))
-        y = random.uniform(margin, max(margin + 1, h * 0.6))
-        return x, y
-
-    @staticmethod
-    def _glow_to_dice_color(glow_hex: str) -> str:
-        """Map a PC slot glow color to the nearest dice pack color.
-
-        Compares the glow color's hue to available pack colors
-        and returns the closest match by hue distance.
-        """
-        glow = QColor(glow_hex)
-        glow_hue = glow.hsvHue()
-
-        color_hues = {
-            "red": 0, "gold": 45, "green": 120,
-            "cyan": 180, "blue": 210, "purple": 270, "white": -1,
-        }
-
-        best_color = "red"
-        best_dist = 999
-        for name, hue in color_hues.items():
-            if hue < 0:
-                continue
-            dist = min(abs(glow_hue - hue), 360 - abs(glow_hue - hue))
-            if dist < best_dist:
-                best_dist = dist
-                best_color = name
-
-        return best_color
-
-    def set_display_mode(self, mode: str):
-        """Set display mode and resize overlay accordingly."""
-        if self.state:
-            self.state.dice_display_mode = mode
-        self._apply_sizing()
-
     # Draggable
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
@@ -633,54 +429,33 @@ class _DiceCanvas(QWidget):
         painter.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
 
         ov = self.overlay
-        mode = ov._get_display_mode()
+        visible = [c for c in ov.cards if c.phase != "done"]
+        to_draw = visible[-ov.MAX_VISIBLE:]
 
-        # 1. Dice sprites (behind cards)
-        if mode in ("dice_only", "dice_and_card"):
-            for sprite in ov.dice_sprites:
-                sprite.paint(painter)
+        # Stack direction
+        if ov._stack == "bottom":
+            # Newest at bottom: start from bottom of overlay, work up
+            total_h = ov.MAX_VISIBLE * (ov.CARD_HEIGHT + ov.CARD_SPACING)
+            y_offset = 10 + total_h - (ov.CARD_HEIGHT + ov.CARD_SPACING)
+            step = -(ov.CARD_HEIGHT + ov.CARD_SPACING)
+        else:
+            # Newest at top (default)
+            y_offset = 10
+            step = ov.CARD_HEIGHT + ov.CARD_SPACING
 
-        # 2. Roll cards
-        if mode in ("card_only", "dice_and_card"):
-            # Filter visible cards (skip delayed cards not yet entering)
-            visible = []
-            for c in ov.cards:
-                if c.phase == "done":
-                    continue
-                # Skip cards still waiting for their delay
-                if (c._delay > 0 and c.phase == "enter"
-                        and c.opacity <= 0):
-                    continue
-                visible.append(c)
-            to_draw = visible[-ov.MAX_VISIBLE:]
+        # Side positioning
+        if ov._side == "right":
+            base_x = ov.width() - ov.CARD_WIDTH - 10
+        else:
+            base_x = 10
 
-            # Y offset for dice_and_card: cards below the dice zone
-            card_area_top = 400 if mode == "dice_and_card" else 0
+        for card in to_draw:
+            card_x = base_x + int(card.slide_x)
+            self._paint_card(painter, card, card_x, y_offset,
+                             ov.CARD_WIDTH, ov.CARD_HEIGHT)
+            y_offset += step
 
-            # Stack direction
-            if ov._stack == "bottom":
-                total_h = (ov.MAX_VISIBLE
-                           * (ov.CARD_HEIGHT + ov.CARD_SPACING))
-                y_offset = (card_area_top + 10 + total_h
-                            - (ov.CARD_HEIGHT + ov.CARD_SPACING))
-                step = -(ov.CARD_HEIGHT + ov.CARD_SPACING)
-            else:
-                y_offset = card_area_top + 10
-                step = ov.CARD_HEIGHT + ov.CARD_SPACING
-
-            # Side positioning
-            if ov._side == "right":
-                base_x = ov.width() - ov.CARD_WIDTH - 10
-            else:
-                base_x = 10
-
-            for card in to_draw:
-                card_x = base_x + int(card.slide_x)
-                self._paint_card(painter, card, card_x, y_offset,
-                                 ov.CARD_WIDTH, ov.CARD_HEIGHT)
-                y_offset += step
-
-        # 3. Effects on top of everything (particles, d20 flash)
+        # Draw effects on top of cards
         if ov.d20_flash:
             ov.d20_flash.paint(painter)
         ov.emitter.paint(painter)
