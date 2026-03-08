@@ -119,6 +119,18 @@ class AvraeParser:
     CAMPAIGN_PATTERN = re.compile(
         r'Rolled\s+in\s+(.+)', re.IGNORECASE)
 
+    # Advantage/disadvantage patterns (Brief 006)
+    # Standard format: 2d20kh1 (**15**, ~~8~~)
+    ADV_PATTERN = re.compile(
+        r'2d20kh1\s*\(\*?\*?(\d+)\*?\*?,?\s*~~(\d+)~~\)', re.IGNORECASE)
+    DIS_PATTERN = re.compile(
+        r'2d20kl1\s*\(\*?\*?(\d+)\*?\*?,?\s*~~(\d+)~~\)', re.IGNORECASE)
+    # Alternative format with extra text between kh1/kl1 and the parens
+    ADV_ALT_PATTERN = re.compile(
+        r'2d20.*?kh1.*?\(\*\*(\d+)\*\*.*?~~(\d+)~~\)', re.IGNORECASE)
+    DIS_ALT_PATTERN = re.compile(
+        r'2d20.*?kl1.*?\(\*\*(\d+)\*\*.*?~~(\d+)~~\)', re.IGNORECASE)
+
     @classmethod
     def parse_message(cls, content: str, embeds: list = None,
                       author_name: str = "") -> Optional[DiceRollEvent]:
@@ -162,6 +174,22 @@ class AvraeParser:
         if die_type in ('1d20', 'd20') and event.natural_roll > 0:
             event.is_critical = event.natural_roll == 20
             event.is_fumble = event.natural_roll == 1
+        event.die_type = die_type if die_type else "d20"
+
+        # Check for advantage/disadvantage in the result formula
+        adv_match = (cls.ADV_PATTERN.search(result_formula)
+                     or cls.ADV_ALT_PATTERN.search(result_formula))
+        dis_match = (cls.DIS_PATTERN.search(result_formula)
+                     or cls.DIS_ALT_PATTERN.search(result_formula))
+        if adv_match:
+            event.is_advantage = True
+            event.natural_roll = int(adv_match.group(1))  # kept die
+            event.secondary_roll = int(adv_match.group(2))  # dropped die
+        elif dis_match:
+            event.is_disadvantage = True
+            event.natural_roll = int(dis_match.group(1))  # kept die
+            event.secondary_roll = int(dis_match.group(2))  # dropped die
+
         event.character_name = author_name or "Unknown"
         event.check_type = "Dice Roll"
         return event
@@ -221,6 +249,25 @@ class AvraeParser:
             if d20_check and d20_check.group(1).lower() in ('1d20', 'd20'):
                 event.is_critical = event.natural_roll == 20
                 event.is_fumble = event.natural_roll == 1
+
+        # Advantage/disadvantage detection in raw description
+        # (must check raw desc before markdown is stripped)
+        # TODO: D&D Beyond GameLog relay format may differ from standard
+        #       Avrae command output. Capture samples via avrae_debug.txt
+        #       during live sessions to verify and add a dedicated path.
+        adv_match = (cls.ADV_PATTERN.search(desc)
+                     or cls.ADV_ALT_PATTERN.search(desc))
+        dis_match = (cls.DIS_PATTERN.search(desc)
+                     or cls.DIS_ALT_PATTERN.search(desc))
+        if adv_match:
+            event.is_advantage = True
+            event.natural_roll = int(adv_match.group(1))  # kept die
+            event.secondary_roll = int(adv_match.group(2))  # dropped die
+        elif dis_match:
+            event.is_disadvantage = True
+            event.natural_roll = int(dis_match.group(1))  # kept die
+            event.secondary_roll = int(dis_match.group(2))  # dropped die
+
         if event.total > 0:
             if not event.character_name:
                 event.character_name = "Unknown"

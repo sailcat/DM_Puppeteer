@@ -1581,10 +1581,30 @@ class AppWindow(QMainWindow):
         self._save_state()
 
     def _send_test_roll(self):
-        """Send a fake dice roll for testing the overlay."""
+        """Send a fake dice roll for testing the overlay.
+
+        Cycles through PC slots round-robin so per-player features
+        (entry direction, pack/color) can be verified visually.
+        """
         import random
-        names = ["Seraphyne", 'Theodore "Duke"Dumberry',
-                 "Cornelia Maizington", "Lachlan Macrae"]
+
+        # Use actual PC slot names if available
+        slot_names = []
+        for slot in self.state.pc_slots:
+            if slot.player_name:
+                slot_names.append(slot.player_name)
+            elif slot.character_id and slot.character_id in self.state.characters:
+                slot_names.append(self.state.characters[slot.character_id].name)
+        if not slot_names:
+            slot_names = ["Seraphyne", 'Theodore "Duke" Dumberry',
+                          "Cornelia Maizington", "Lachlan Macrae"]
+
+        # Round-robin through slots for deterministic testing
+        if not hasattr(self, '_test_roll_index'):
+            self._test_roll_index = 0
+        name = slot_names[self._test_roll_index % len(slot_names)]
+        self._test_roll_index += 1
+
         checks = ["Deception check", "Perception check", "Stealth check",
                    "Athletics check", "Persuasion check", "Insight check",
                    "Attack: Longsword", "Dexterity saving throw"]
@@ -1593,7 +1613,7 @@ class AppWindow(QMainWindow):
         total = nat + mod
 
         event = DiceRollEvent(
-            character_name=random.choice(names),
+            character_name=name,
             check_type=random.choice(checks),
             roll_formula=f"1d20 ({nat}) + {mod} = {total}",
             natural_roll=nat,

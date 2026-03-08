@@ -732,7 +732,7 @@ class PCSlotEditor(QFrame):
     changed = pyqtSignal()
     remove_requested = pyqtSignal(str)  # slot.id
 
-    def __init__(self, slot: PCSlot, characters: dict, obs_inputs: list = None,
+    def __init__(self, slot: PCSlot, characters: dict,
                  dice_packs: list = None, dice_colors: list = None,
                  parent=None):
         super().__init__(parent)
@@ -746,7 +746,7 @@ class PCSlotEditor(QFrame):
                 background: #252525; padding: 6px;
             }
         """)
-        self.setFixedHeight(184)
+        self.setFixedHeight(136)
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(8, 6, 8, 6)
@@ -787,42 +787,71 @@ class PCSlotEditor(QFrame):
         row1.addStretch()
         config.addLayout(row1)
 
-        # Row 2: Audio source + threshold
+        # Row 2: Discord user mapping + DM checkbox
         row2 = QHBoxLayout()
-        row2.addWidget(QLabel("Audio:"))
-        self.audio_combo = QComboBox()
-        self.audio_combo.addItem("(none)", "")
-        self.audio_combo.setFixedWidth(160)
-        self.audio_combo.currentIndexChanged.connect(self._on_change)
-        row2.addWidget(self.audio_combo)
+        row2.addWidget(QLabel("Discord:"))
+        self.discord_user_combo = QComboBox()
+        self.discord_user_combo.setFixedWidth(160)
+        self.discord_user_combo.addItem("(none)", 0)
+        # Restore saved selection if we have one
+        if slot.discord_user_id:
+            self.discord_user_combo.addItem(f"User {slot.discord_user_id}", slot.discord_user_id)
+            self.discord_user_combo.setCurrentIndex(1)
+        self.discord_user_combo.currentIndexChanged.connect(
+            self._on_discord_user_changed)
+        row2.addWidget(self.discord_user_combo)
 
-        row2.addWidget(QLabel("Sens:"))
-        self.threshold_slider = QSlider(Qt.Orientation.Horizontal)
-        self.threshold_slider.setRange(1, 100)
-        self.threshold_slider.setValue(int(slot.audio_threshold * 1000))
-        self.threshold_slider.setFixedWidth(80)
-        self.threshold_slider.valueChanged.connect(self._on_change)
-        row2.addWidget(self.threshold_slider)
+        self.dm_slot_check = QCheckBox("DM (use local mic)")
+        self.dm_slot_check.setChecked(slot.is_dm)
+        self.dm_slot_check.setToolTip(
+            "DM's portrait uses the local microphone instead of Discord.\n"
+            "Use this when the DM pipes music/sounds through Discord.")
+        self.dm_slot_check.toggled.connect(self._on_dm_slot_changed)
+        row2.addWidget(self.dm_slot_check)
+        # Grey out Discord combo if DM slot
+        self.discord_user_combo.setEnabled(not slot.is_dm)
+
         row2.addStretch()
         config.addLayout(row2)
 
-        # Row 3: Glow color + intensity + remove
+        # Row 3: Color + Intensity % + Sensitivity + level meter + X
         row3 = QHBoxLayout()
-        row3.addWidget(QLabel("Glow:"))
+        row3.setSpacing(3)
+
+        lbl_color = QLabel("Color:")
+        lbl_color.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
+        row3.addWidget(lbl_color)
         self.color_btn = QPushButton()
         self.color_btn.setFixedSize(28, 22)
         self._update_color_btn()
         self.color_btn.clicked.connect(self._pick_color)
         row3.addWidget(self.color_btn)
 
+        row3.addSpacing(6)
+        lbl_intensity = QLabel("Intensity:")
+        lbl_intensity.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
+        row3.addWidget(lbl_intensity)
         self.glow_slider = QSlider(Qt.Orientation.Horizontal)
         self.glow_slider.setRange(0, 100)
         self.glow_slider.setValue(int(slot.glow_intensity * 100))
-        self.glow_slider.setFixedWidth(70)
-        self.glow_slider.setToolTip("Glow intensity")
+        self.glow_slider.setFixedWidth(60)
+        self.glow_slider.setToolTip("Glow intensity percentage")
         self.glow_slider.valueChanged.connect(self._on_change)
         row3.addWidget(self.glow_slider)
 
+        row3.addSpacing(6)
+        lbl_sens = QLabel("Sensitivity:")
+        lbl_sens.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
+        row3.addWidget(lbl_sens)
+        self.threshold_slider = QSlider(Qt.Orientation.Horizontal)
+        self.threshold_slider.setRange(1, 100)
+        self.threshold_slider.setValue(int(slot.audio_threshold * 1000))
+        self.threshold_slider.setFixedWidth(60)
+        self.threshold_slider.setToolTip("Voice detection sensitivity")
+        self.threshold_slider.valueChanged.connect(self._on_change)
+        row3.addWidget(self.threshold_slider)
+
+        row3.addSpacing(4)
         # Level meter
         self.level_label = QLabel("-" * 10)
         self.level_label.setStyleSheet("color: #555; font-family: monospace; font-size: 9px;")
@@ -839,66 +868,9 @@ class PCSlotEditor(QFrame):
         row3.addWidget(remove_btn)
         config.addLayout(row3)
 
-        # Row 4: Discord user mapping
+        # Row 4: Dice pack + color
         row4 = QHBoxLayout()
-        row4.addWidget(QLabel("Discord:"))
-        self.discord_user_combo = QComboBox()
-        self.discord_user_combo.setFixedWidth(160)
-        self.discord_user_combo.addItem("(none)", 0)
-        # Restore saved selection if we have one
-        if slot.discord_user_id:
-            self.discord_user_combo.addItem(f"User {slot.discord_user_id}", slot.discord_user_id)
-            self.discord_user_combo.setCurrentIndex(1)
-        self.discord_user_combo.currentIndexChanged.connect(
-            self._on_discord_user_changed)
-        row4.addWidget(self.discord_user_combo)
-
-        self.dm_slot_check = QCheckBox("DM (use local mic)")
-        self.dm_slot_check.setChecked(slot.is_dm)
-        self.dm_slot_check.setToolTip(
-            "DM's portrait uses the local microphone instead of Discord.\n"
-            "Use this when the DM pipes music/sounds through Discord.")
-        self.dm_slot_check.toggled.connect(self._on_dm_slot_changed)
-        row4.addWidget(self.dm_slot_check)
-        # Grey out Discord combo if DM slot
-        self.discord_user_combo.setEnabled(not slot.is_dm)
-
-        row4.addStretch()
-        config.addLayout(row4)
-
-        # Row 5: Voice tuning presets
-        row5 = QHBoxLayout()
-        row5.addWidget(QLabel("Voice:"))
-
-        self._voice_presets = {
-            # (attack_ms, decay_ms, smoothing, adaptive_multiplier)
-            "Default":    (50, 250, 0.30, 2.5),
-            "Responsive": (30, 150, 0.40, 2.0),   # more sensitive
-            "Smooth":     (80, 400, 0.20, 3.0),   # less sensitive, filters more
-            "Dramatic":   (50, 600, 0.30, 2.5),
-        }
-        self._voice_preset_tips = {
-            "Default":    "Balanced -- good starting point (threshold auto-adjusts)",
-            "Responsive": "Fast talker -- snappy response, more sensitive",
-            "Smooth":     "Reduces noise -- filters out brief sounds",
-            "Dramatic":   "Long hold -- portrait stays lit through pauses",
-        }
-        self._preset_buttons: dict[str, QPushButton] = {}
-        for name in self._voice_presets:
-            btn = QPushButton(name)
-            btn.setFixedHeight(22)
-            btn.setToolTip(self._voice_preset_tips[name])
-            btn.setCursor(Qt.CursorShape.PointingHandCursor)
-            btn.clicked.connect(lambda _, n=name: self._apply_voice_preset(n))
-            self._preset_buttons[name] = btn
-            row5.addWidget(btn)
-
-        row5.addStretch()
-        config.addLayout(row5)
-
-        # Row 6: Dice pack + color
-        row6 = QHBoxLayout()
-        row6.addWidget(QLabel("Dice:"))
+        row4.addWidget(QLabel("Dice:"))
 
         self.dice_pack_combo = QComboBox()
         self.dice_pack_combo.addItem("(default)", "")
@@ -909,9 +881,9 @@ class PCSlotEditor(QFrame):
             self.dice_pack_combo.setCurrentIndex(idx)
         self.dice_pack_combo.setFixedWidth(100)
         self.dice_pack_combo.currentIndexChanged.connect(self._on_dice_change)
-        row6.addWidget(self.dice_pack_combo)
+        row4.addWidget(self.dice_pack_combo)
 
-        row6.addWidget(QLabel("Color:"))
+        row4.addWidget(QLabel("Color:"))
         self.dice_color_combo = QComboBox()
         self.dice_color_combo.addItem("(auto)", "")
         for cname in self._dice_colors:
@@ -921,35 +893,14 @@ class PCSlotEditor(QFrame):
             self.dice_color_combo.setCurrentIndex(idx)
         self.dice_color_combo.setFixedWidth(80)
         self.dice_color_combo.currentIndexChanged.connect(self._on_dice_change)
-        row6.addWidget(self.dice_color_combo)
+        row4.addWidget(self.dice_color_combo)
 
-        row6.addStretch()
-        config.addLayout(row6)
-
-        # Identify which preset matches current values (or "Custom")
-        self._active_preset = self._detect_current_preset()
-        self._style_preset_buttons()
+        row4.addStretch()
+        config.addLayout(row4)
 
         layout.addLayout(config, stretch=1)
 
-        # Populate audio sources if provided
-        if obs_inputs:
-            self.populate_audio_sources(obs_inputs)
-
         self._update_thumbnail()
-
-    def populate_audio_sources(self, input_names: list):
-        """Fill the audio source combo with OBS inputs"""
-        current = self.slot.obs_audio_source
-        self.audio_combo.blockSignals(True)
-        self.audio_combo.clear()
-        self.audio_combo.addItem("(none)", "")
-        for name in input_names:
-            self.audio_combo.addItem(name, name)
-        idx = self.audio_combo.findData(current)
-        if idx >= 0:
-            self.audio_combo.setCurrentIndex(idx)
-        self.audio_combo.blockSignals(False)
 
     def _on_discord_user_changed(self, index):
         user_id = self.discord_user_combo.currentData() or 0
@@ -960,41 +911,6 @@ class PCSlotEditor(QFrame):
         self.slot.is_dm = checked
         self.discord_user_combo.setEnabled(not checked)
         self.changed.emit()
-
-    def _apply_voice_preset(self, preset_name: str):
-        """Apply a voice tuning preset to this slot."""
-        attack, decay, smooth, multiplier = self._voice_presets[preset_name]
-        self.slot.voice_attack_ms = attack
-        self.slot.voice_decay_ms = decay
-        self.slot.voice_smoothing = smooth
-        self.slot.voice_adaptive_multiplier = multiplier
-        self._active_preset = preset_name
-        self._style_preset_buttons()
-        self.changed.emit()
-
-    def _detect_current_preset(self) -> str:
-        """Check if current slot values match any preset."""
-        current = (self.slot.voice_attack_ms, self.slot.voice_decay_ms,
-                   self.slot.voice_smoothing,
-                   getattr(self.slot, 'voice_adaptive_multiplier', 2.5))
-        for name, values in self._voice_presets.items():
-            if current == values:
-                return name
-        return ""
-
-    def _style_preset_buttons(self):
-        """Highlight the active preset button."""
-        for name, btn in self._preset_buttons.items():
-            if name == self._active_preset:
-                btn.setStyleSheet(
-                    "QPushButton { background: #2a5a3a; border: 1px solid #00cc66; "
-                    "border-radius: 3px; padding: 2px 8px; color: #fff; font-size: 10px; }"
-                    "QPushButton:hover { background: #3a6a4a; }")
-            else:
-                btn.setStyleSheet(
-                    "QPushButton { background: #333; border: 1px solid #555; "
-                    "border-radius: 3px; padding: 2px 8px; color: #aaa; font-size: 10px; }"
-                    "QPushButton:hover { background: #444; color: #ddd; }")
 
     def populate_discord_users(self, members: list):
         """Populate the Discord user dropdown from voice channel members.
@@ -1026,7 +942,6 @@ class PCSlotEditor(QFrame):
     def _on_change(self, *_):
         self.slot.player_name = self.name_input.text().strip()
         self.slot.character_id = self.char_combo.currentData() or ""
-        self.slot.obs_audio_source = self.audio_combo.currentData() or ""
         self.slot.audio_threshold = self.threshold_slider.value() / 1000.0
         self.slot.glow_intensity = self.glow_slider.value() / 100.0
         self._update_thumbnail()

@@ -296,6 +296,10 @@ class _DiscordBotRunner:
         self._voice_client = None
         self._voice_sink = None
         self._player_map: Dict[int, int] = {}  # discord_user_id -> slot_index
+        self._voice_channel_id: int = 0         # saved for auto-reconnect
+        self._voice_monitor_task = None
+        self._voice_reconnect_count: int = 0
+        self._voice_max_reconnects: int = 5
 
         # Command queue -- main thread sends commands to bot thread
         self._command_queue: queue.Queue = queue.Queue()
@@ -331,7 +335,13 @@ class _DiscordBotRunner:
         """Request the bot to stop."""
         self._running = False
         if self.client and self.loop:
-            # Clean up voice connection first
+            # Cancel voice monitor and clean up voice connection
+            try:
+                future = asyncio.run_coroutine_threadsafe(
+                    self._stop_voice_monitor(), self.loop)
+                future.result(timeout=1)
+            except Exception:
+                pass
             try:
                 if self._voice_client:
                     future = asyncio.run_coroutine_threadsafe(
@@ -464,21 +474,39 @@ class _DiscordBotRunner:
     # ------------------------------------------------------------------
 
     async def join_voice_channel(self, channel_id: int, player_map: Dict[int, int]):
-        """Join a voice channel and start receiving per-user audio."""
+        """Join a voice channel and start receiving per-user audio.
+
+        Known issue: py-cord's voice WebSocket (ws) may fail to complete
+        its TLS handshake to Discord's voice server, resulting in ws
+        existing but keep_alive never starting. Without the heartbeat,
+        Discord kills the UDP connection after ~25 seconds.
+
+        Current workaround: force _connected, start recording, and let
+        the health monitor auto-reconnect when the connection drops.
+        This gives bursts of ~25s audio with brief reconnect gaps.
+
+        Root cause under investigation: likely aiohttp TLS compatibility
+        with Discord's voice endpoints.
+        """
         if not VOICE_RECEIVE_AVAILABLE:
             self.event_queue.put(("error",
                 "Voice receive not available.\nInstall: pip install py-cord[voice]"))
             return
 
+        # Stop existing monitor before disconnecting
+        await self._stop_voice_monitor()
+
         # Disconnect existing (without emitting spurious event)
         await self._disconnect_voice()
+
+        # Save for reconnection
+        self._voice_channel_id = channel_id
+        self._player_map = player_map.copy()
 
         channel = self.client.get_channel(channel_id)
         if channel is None:
             self.event_queue.put(("error", f"Voice channel {channel_id} not found"))
             return
-
-        self._player_map = player_map.copy()
 
         def on_audio_processed(slot_index: int, rms: float, vowel: str,
                                threshold: float):
@@ -495,12 +523,8 @@ class _DiscordBotRunner:
                 self._voice_sink.register_player(
                     user_id, slot_idx, adaptive_multiplier=multiplier)
 
-            # -- DIAGNOSTIC: log the full player map --
-            print(f"[VOICE DIAG] Player map: {self._player_map}")
-            print(f"[VOICE DIAG] Registered processor keys: "
-                  f"{list(self._voice_sink.processors.keys())}")
-            print(f"[VOICE DIAG] Processor key types: "
-                  f"{[type(k).__name__ for k in self._voice_sink.processors.keys()]}")
+            print(f"[VOICE] Connecting to channel {channel_id} "
+                  f"with {len(self._player_map)} player(s)")
 
             # Connect to voice channel
             self._voice_client = await channel.connect()
@@ -509,21 +533,40 @@ class _DiscordBotRunner:
             # Wait for voice handshake to settle
             await asyncio.sleep(2)
 
-            # py-cord workaround: _connected threading.Event may not get set
-            # even though the voice WebSocket is fully established. Force it
-            # when we can verify the connection infrastructure is present.
-            if hasattr(vc, '_connected') and hasattr(vc._connected, 'set'):
-                vc._connected.set()
+            # Check voice WebSocket health
+            ws = getattr(vc, 'ws', None)
+            connected_evt = getattr(vc, '_connected', None)
+            ws_healthy = False
 
-            # Start recording with retry (connection may still be settling)
+            if ws is not None:
+                ka = (getattr(ws, '_keep_alive', None)
+                      or getattr(ws, 'keep_alive', None))
+                ka_alive = ka.is_alive() if ka and hasattr(ka, 'is_alive') else False
+                ws_healthy = (connected_evt and connected_evt.is_set()) or ka_alive
+                print(f"[VOICE] ws={type(ws).__name__}, "
+                      f"_connected={connected_evt.is_set() if connected_evt else '?'}, "
+                      f"keep_alive={ka_alive}")
+            else:
+                print("[VOICE] ws=None -- voice WebSocket failed to connect")
+
+            if ws_healthy:
+                print("[VOICE] Healthy connection -- heartbeat running")
+            else:
+                print("[VOICE] Degraded connection -- forcing _connected, "
+                      "health monitor will auto-reconnect on drop")
+
+            # Force _connected so start_recording works regardless
+            if connected_evt and hasattr(connected_evt, 'set'):
+                connected_evt.set()
+
+            # Start recording with retry
             async def on_recording_finished(sink, *args):
                 pass
 
             recording_started = False
             for attempt in range(50):  # up to 5 seconds
-                # Re-force _connected on each attempt
-                if hasattr(vc, '_connected') and hasattr(vc._connected, 'set'):
-                    vc._connected.set()
+                if connected_evt and hasattr(connected_evt, 'set'):
+                    connected_evt.set()
                 try:
                     vc.start_recording(
                         self._voice_sink,
@@ -541,6 +584,15 @@ class _DiscordBotRunner:
                 await self._disconnect_voice()
                 return
 
+            print(f"[VOICE] Recording started")
+
+            # Reset reconnect count on successful join
+            self._voice_reconnect_count = 0
+
+            # Start voice health monitor
+            self._voice_monitor_task = self.client.loop.create_task(
+                self._voice_health_monitor())
+
             # Report success
             member_names = [m.display_name for m in channel.members
                            if m.id != self.client.user.id]
@@ -552,6 +604,9 @@ class _DiscordBotRunner:
             }))
 
         except Exception as e:
+            import traceback
+            print(f"[VOICE] Join failed:")
+            traceback.print_exc()
             self.event_queue.put(("error", f"Voice join failed: {e}"))
             self._voice_client = None
             self._voice_sink = None
@@ -559,12 +614,21 @@ class _DiscordBotRunner:
     async def leave_voice_channel(self):
         """Disconnect from voice, stop receiving audio, and notify Qt."""
         was_connected = self._voice_client is not None
+        await self._stop_voice_monitor()
+        self._voice_channel_id = 0
+        self._voice_reconnect_count = 0
         await self._disconnect_voice()
+        self._player_map.clear()
         if was_connected:
             self.event_queue.put(("voice_disconnected", None))
 
     async def _disconnect_voice(self):
-        """Internal: disconnect voice without emitting events."""
+        """Internal: disconnect voice without emitting events.
+
+        NOTE: Does NOT clear _player_map or _voice_channel_id.
+        Those are preserved for auto-reconnect. Intentional disconnect
+        (leave_voice_channel) clears them explicitly.
+        """
         # -- DIAGNOSTIC: force final dump --
         try:
             from .voice_diagnostics import diag
@@ -595,7 +659,126 @@ class _DiscordBotRunner:
                 pass
             self._voice_sink = None
 
-        self._player_map.clear()
+    # ------------------------------------------------------------------
+    # Voice Health Monitor + Auto-Reconnect
+    # ------------------------------------------------------------------
+
+    async def _voice_health_monitor(self):
+        """Periodically check if the voice connection is alive.
+
+        Runs as an asyncio task on the bot's event loop. Checks every 5s.
+        If the voice client is dead (socket closed, client disconnected),
+        triggers auto-reconnect with saved channel_id + player_map.
+
+        The ~25s Discord timeout (2x voice heartbeat interval) means we
+        detect the drop within 5-10 seconds of it happening.
+        """
+        print("[VOICE MONITOR] Started")
+        await asyncio.sleep(10)  # initial grace period after connect
+
+        while self._running and self._voice_channel_id:
+            try:
+                alive = self._check_voice_alive()
+                if not alive:
+                    print("[VOICE MONITOR] Voice connection lost!")
+                    # Dump state for diagnostics
+                    vc = self._voice_client
+                    if vc:
+                        print(f"  is_connected(): {vc.is_connected()}")
+                        ws = getattr(vc, 'ws', None)
+                        if ws:
+                            ka = (getattr(ws, '_keep_alive', None)
+                                  or getattr(ws, 'keep_alive', None))
+                            if ka and hasattr(ka, 'is_alive'):
+                                print(f"  keep_alive.is_alive(): {ka.is_alive()}")
+                        sock = getattr(vc, 'socket', None)
+                        if sock:
+                            try:
+                                print(f"  socket.fileno(): {sock.fileno()}")
+                            except Exception as e:
+                                print(f"  socket error: {e}")
+                    print("[VOICE MONITOR] Attempting reconnect...")
+                    await self._voice_reconnect()
+                    return  # reconnect starts a new monitor if successful
+            except asyncio.CancelledError:
+                print("[VOICE MONITOR] Cancelled")
+                return
+            except Exception as e:
+                print(f"[VOICE MONITOR] Error: {e}")
+            await asyncio.sleep(5)
+
+        print("[VOICE MONITOR] Stopped (no channel or not running)")
+
+    def _check_voice_alive(self) -> bool:
+        """Check if the voice client is still functional."""
+        vc = self._voice_client
+        if vc is None:
+            return False
+
+        # Check py-cord's is_connected flag
+        if not vc.is_connected():
+            return False
+
+        # Check if the UDP socket is still valid
+        if hasattr(vc, 'socket') and vc.socket is not None:
+            try:
+                # socket.fileno() returns -1 if closed on Windows
+                if vc.socket.fileno() == -1:
+                    return False
+            except Exception:
+                return False
+        else:
+            # No socket means connection was torn down
+            return False
+
+        return True
+
+    async def _voice_reconnect(self):
+        """Auto-reconnect to voice with saved channel + player map."""
+        channel_id = self._voice_channel_id
+        player_map = self._player_map.copy()
+
+        if not channel_id or not player_map:
+            print("[VOICE RECONNECT] No saved channel/players -- cannot reconnect")
+            self.event_queue.put(("voice_disconnected", None))
+            return
+
+        self._voice_reconnect_count += 1
+        if self._voice_reconnect_count > self._voice_max_reconnects:
+            print(f"[VOICE RECONNECT] Max retries ({self._voice_max_reconnects}) "
+                  f"exceeded -- giving up")
+            self.event_queue.put(("voice_disconnected", None))
+            self._voice_channel_id = 0
+            self._player_map.clear()
+            return
+
+        # Exponential backoff: 2s, 4s, 8s, 16s, 32s
+        delay = min(2 ** self._voice_reconnect_count, 32)
+        print(f"[VOICE RECONNECT] Attempt {self._voice_reconnect_count}/"
+              f"{self._voice_max_reconnects} in {delay}s")
+
+        self.event_queue.put(("voice_reconnecting", {
+            "attempt": self._voice_reconnect_count,
+            "max_attempts": self._voice_max_reconnects,
+            "delay": delay,
+        }))
+
+        # Clean up dead connection
+        await self._disconnect_voice()
+        await asyncio.sleep(delay)
+
+        # Rejoin -- join_voice_channel will start a fresh monitor
+        await self.join_voice_channel(channel_id, player_map)
+
+    async def _stop_voice_monitor(self):
+        """Cancel the voice health monitor task."""
+        if self._voice_monitor_task and not self._voice_monitor_task.done():
+            self._voice_monitor_task.cancel()
+            try:
+                await self._voice_monitor_task
+            except asyncio.CancelledError:
+                pass
+        self._voice_monitor_task = None
 
     def update_player_map(self, player_map: Dict[int, int]):
         """Update Discord user -> slot mapping without reconnecting."""
@@ -673,6 +856,7 @@ class DiscordBridge(QObject):
     player_audio_update = pyqtSignal(int, float, str, float)  # slot_index, rms, vowel, threshold
     voice_connected = pyqtSignal(dict)                  # channel info
     voice_disconnected = pyqtSignal()
+    voice_reconnecting = pyqtSignal(dict)               # attempt info
     voice_channels_updated = pyqtSignal(list)           # list of channel dicts
 
     def __init__(self, parent=None):
@@ -812,10 +996,19 @@ class DiscordBridge(QObject):
                 self._voice_active = False
                 self.voice_disconnected.emit()
 
+            elif event_type == "voice_reconnecting":
+                # Voice dropped but auto-reconnect is in progress
+                self.voice_reconnecting.emit(data)
+
             elif event_type == "voice_channels":
                 self.voice_channels_updated.emit(data)
 
             elif event_type == "error":
-                self._connected = False
-                self.error_occurred.emit(str(data))
-                self.connection_changed.emit(False, f"Error: {data}")
+                msg = str(data)
+                # Voice errors should not kill the bot connection status
+                if "Voice" in msg or "voice" in msg or "recording" in msg:
+                    self.error_occurred.emit(msg)
+                else:
+                    self._connected = False
+                    self.error_occurred.emit(msg)
+                    self.connection_changed.emit(False, f"Error: {data}")

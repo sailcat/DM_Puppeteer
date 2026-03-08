@@ -733,17 +733,20 @@ class PCSlotEditor(QFrame):
     remove_requested = pyqtSignal(str)  # slot.id
 
     def __init__(self, slot: PCSlot, characters: dict, obs_inputs: list = None,
+                 dice_packs: list = None, dice_colors: list = None,
                  parent=None):
         super().__init__(parent)
         self.slot = slot
         self._characters = characters
+        self._dice_packs = dice_packs or []
+        self._dice_colors = dice_colors or []
 
         self.setStyleSheet("""PCSlotEditor {
                 border: 1px solid #444; border-radius: 6px;
                 background: #252525; padding: 6px;
             }
         """)
-        self.setFixedHeight(158)
+        self.setFixedHeight(184)
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(8, 6, 8, 6)
@@ -893,6 +896,36 @@ class PCSlotEditor(QFrame):
         row5.addStretch()
         config.addLayout(row5)
 
+        # Row 6: Dice pack + color
+        row6 = QHBoxLayout()
+        row6.addWidget(QLabel("Dice:"))
+
+        self.dice_pack_combo = QComboBox()
+        self.dice_pack_combo.addItem("(default)", "")
+        for pname in self._dice_packs:
+            self.dice_pack_combo.addItem(pname, pname)
+        idx = self.dice_pack_combo.findData(slot.dice_pack)
+        if idx >= 0:
+            self.dice_pack_combo.setCurrentIndex(idx)
+        self.dice_pack_combo.setFixedWidth(100)
+        self.dice_pack_combo.currentIndexChanged.connect(self._on_dice_change)
+        row6.addWidget(self.dice_pack_combo)
+
+        row6.addWidget(QLabel("Color:"))
+        self.dice_color_combo = QComboBox()
+        self.dice_color_combo.addItem("(auto)", "")
+        for cname in self._dice_colors:
+            self.dice_color_combo.addItem(cname, cname)
+        idx = self.dice_color_combo.findData(slot.dice_color)
+        if idx >= 0:
+            self.dice_color_combo.setCurrentIndex(idx)
+        self.dice_color_combo.setFixedWidth(80)
+        self.dice_color_combo.currentIndexChanged.connect(self._on_dice_change)
+        row6.addWidget(self.dice_color_combo)
+
+        row6.addStretch()
+        config.addLayout(row6)
+
         # Identify which preset matches current values (or "Custom")
         self._active_preset = self._detect_current_preset()
         self._style_preset_buttons()
@@ -997,6 +1030,11 @@ class PCSlotEditor(QFrame):
         self.slot.audio_threshold = self.threshold_slider.value() / 1000.0
         self.slot.glow_intensity = self.glow_slider.value() / 100.0
         self._update_thumbnail()
+        self.changed.emit()
+
+    def _on_dice_change(self, *_):
+        self.slot.dice_pack = self.dice_pack_combo.currentData() or ""
+        self.slot.dice_color = self.dice_color_combo.currentData() or ""
         self.changed.emit()
 
     def _pick_color(self):

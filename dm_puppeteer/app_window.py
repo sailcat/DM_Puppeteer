@@ -1,5 +1,5 @@
 """Main application window -- DM Puppeteer control panel.
-Three tabs: NPC Puppet | OBS Control | PC Portraits
+Four tabs: Characters | Portraits | Dice | Combat  + Settings Gear
 """
 
 import shutil
@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (
     QLabel, QPushButton, QLineEdit, QSlider, QComboBox, QGroupBox,
     QFrame, QStatusBar, QSystemTrayIcon, QMenu, QTabWidget,
     QSizePolicy, QMessageBox, QApplication, QScrollArea, QCheckBox,
-    QSpinBox
+    QSpinBox, QDialog, QToolButton
 )
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 from PyQt6.QtGui import QPixmap, QColor, QPainter, QFont, QIcon, QPen
@@ -34,6 +34,193 @@ from .dice_overlay import DiceRollOverlay
 from .bestiary import BestiaryManager
 from .combat_tab import CombatTab
 from .initiative_overlay import InitiativeOverlay
+
+
+class SettingsDialog(QDialog):
+    """Modeless settings dialog -- Discord, OBS, and Microphone config."""
+
+    def __init__(self, state, audio_monitor, parent=None):
+        super().__init__(parent)
+        self.state = state
+        self.audio = audio_monitor
+
+        self.setWindowTitle("Settings")
+        self.setMinimumWidth(460)
+        self.setStyleSheet("""
+            QDialog { background: #1e1e1e; color: #ddd; }
+            QGroupBox { border: 1px solid #444; border-radius: 6px;
+                        margin-top: 10px; padding-top: 16px;
+                        font-weight: bold; color: #ccc; }
+            QGroupBox::title { subcontrol-origin: margin; left: 12px;
+                               padding: 0 6px; }
+            QLabel { color: #ccc; }
+            QLineEdit { background: #2a2a2a; border: 1px solid #555;
+                        border-radius: 4px; padding: 4px 8px; color: #ddd; }
+            QLineEdit:focus { border-color: #6688cc; }
+            QPushButton { background: #333; border: 1px solid #555;
+                          border-radius: 4px; padding: 6px 14px; color: #ddd; }
+            QPushButton:hover { background: #444; border-color: #777; }
+            QComboBox { background: #2a2a2a; border: 1px solid #555;
+                        border-radius: 4px; padding: 4px 8px; color: #ddd; }
+            QCheckBox { color: #ccc; }
+            QSlider::groove:horizontal { height: 6px; background: #333;
+                                          border-radius: 3px; }
+            QSlider::handle:horizontal { width: 16px; height: 16px;
+                                          margin: -5px 0; background: #888;
+                                          border-radius: 8px; }
+        """)
+
+        layout = QVBoxLayout(self)
+        layout.setSpacing(12)
+
+        # --- Discord Bot Connection ---
+        discord_group = QGroupBox("Discord Bot Connection")
+        dg = QVBoxLayout()
+
+        token_row = QHBoxLayout()
+        token_row.addWidget(QLabel("Bot Token:"))
+        self.discord_token_input = QLineEdit(state.discord_token)
+        self.discord_token_input.setEchoMode(QLineEdit.EchoMode.Password)
+        self.discord_token_input.setPlaceholderText(
+            "Paste your bot token from Discord Developer Portal")
+        token_row.addWidget(self.discord_token_input)
+        dg.addLayout(token_row)
+
+        settings_row = QHBoxLayout()
+        settings_row.addWidget(QLabel("Roll Channel ID:"))
+        self.discord_channel_input = QLineEdit(
+            str(state.discord_roll_channel_id) if state.discord_roll_channel_id else "")
+        self.discord_channel_input.setPlaceholderText(
+            "Right-click channel -> Copy Channel ID")
+        self.discord_channel_input.setFixedWidth(200)
+        settings_row.addWidget(self.discord_channel_input)
+        settings_row.addStretch()
+        dg.addLayout(settings_row)
+
+        ctrl_row = QHBoxLayout()
+        self.discord_connect_btn = QPushButton("Connect")
+        self.discord_connect_btn.setFixedWidth(100)
+        ctrl_row.addWidget(self.discord_connect_btn)
+        self.discord_auto_check = QCheckBox("Auto-connect")
+        self.discord_auto_check.setChecked(state.discord_auto_connect)
+        ctrl_row.addWidget(self.discord_auto_check)
+        self.discord_status = QLabel("*  Not connected")
+        self.discord_status.setStyleSheet("color: #888;")
+        self.discord_status.setWordWrap(True)
+        ctrl_row.addWidget(self.discord_status)
+        ctrl_row.addStretch()
+        dg.addLayout(ctrl_row)
+
+        # Collapsible setup guide
+        self.guide_toggle = QPushButton("Show Setup Guide")
+        self.guide_toggle.setFixedWidth(130)
+        self.guide_toggle.setStyleSheet(
+            "QPushButton { color: #888; background: transparent; "
+            "border: none; font-size: 10px; text-decoration: underline; }"
+            "QPushButton:hover { color: #aaa; }")
+        self.guide_toggle.clicked.connect(self._toggle_guide)
+        dg.addWidget(self.guide_toggle)
+
+        self.guide_label = QLabel(
+            "<b>One-time setup:</b><br>"
+            "1. discord.com/developers -> New Application<br>"
+            "2. Bot -> Create Bot -> copy token<br>"
+            "3. Enable Intents: Message Content, Server Members, Voice States<br>"
+            "4. OAuth2 -> bot scope -> Read Messages, Read History, Connect<br>"
+            "5. Copy invite URL -> send to server admin")
+        self.guide_label.setStyleSheet("color: #888; font-size: 10px; padding: 4px;")
+        self.guide_label.setWordWrap(True)
+        self.guide_label.setVisible(False)
+        dg.addWidget(self.guide_label)
+
+        if not DISCORD_AVAILABLE:
+            warn = QLabel("*  py-cord not installed. Run: pip install py-cord[voice]")
+            warn.setStyleSheet("color: #cc6600; font-weight: bold;")
+            warn.setWordWrap(True)
+            dg.addWidget(warn)
+
+        discord_group.setLayout(dg)
+        layout.addWidget(discord_group)
+
+        # --- OBS Connection ---
+        obs_group = QGroupBox("OBS Connection")
+        og = QVBoxLayout()
+
+        obs_row1 = QHBoxLayout()
+        obs_row1.addWidget(QLabel("Host:"))
+        self.obs_host_input = QLineEdit(state.obs_host)
+        self.obs_host_input.setFixedWidth(120)
+        obs_row1.addWidget(self.obs_host_input)
+        obs_row1.addWidget(QLabel("Port:"))
+        self.obs_port_input = QLineEdit(str(state.obs_port))
+        self.obs_port_input.setFixedWidth(60)
+        obs_row1.addWidget(self.obs_port_input)
+        obs_row1.addWidget(QLabel("Password:"))
+        self.obs_pass_input = QLineEdit(state.obs_password)
+        self.obs_pass_input.setEchoMode(QLineEdit.EchoMode.Password)
+        self.obs_pass_input.setFixedWidth(120)
+        self.obs_pass_input.setPlaceholderText("(optional)")
+        obs_row1.addWidget(self.obs_pass_input)
+        obs_row1.addStretch()
+        og.addLayout(obs_row1)
+
+        obs_ctrl = QHBoxLayout()
+        self.obs_connect_btn = QPushButton("Connect")
+        self.obs_connect_btn.setFixedWidth(100)
+        obs_ctrl.addWidget(self.obs_connect_btn)
+        self.obs_auto_check = QCheckBox("Auto-connect")
+        self.obs_auto_check.setChecked(state.obs_auto_connect)
+        obs_ctrl.addWidget(self.obs_auto_check)
+        self.obs_status = QLabel("*  Not connected")
+        self.obs_status.setStyleSheet("color: #888;")
+        obs_ctrl.addWidget(self.obs_status)
+        obs_ctrl.addStretch()
+        og.addLayout(obs_ctrl)
+
+        if not OBS_AVAILABLE:
+            warn = QLabel("*  obsws-python not installed. Run: pip install obsws-python")
+            warn.setStyleSheet("color: #cc6600; font-weight: bold;")
+            warn.setWordWrap(True)
+            og.addWidget(warn)
+
+        obs_group.setLayout(og)
+        layout.addWidget(obs_group)
+
+        # --- Microphone ---
+        mic_group = QGroupBox("Microphone")
+        mg = QVBoxLayout()
+
+        mic_row = QHBoxLayout()
+        mic_row.addWidget(QLabel("Device:"))
+        self.mic_combo = QComboBox()
+        self.mic_combo.addItem("Default", None)
+        for di, dn in AudioMonitor.list_devices():
+            self.mic_combo.addItem(dn, di)
+        mic_row.addWidget(self.mic_combo)
+        mg.addLayout(mic_row)
+
+        sens_row = QHBoxLayout()
+        sens_row.addWidget(QLabel("Sensitivity:"))
+        self.mic_threshold_slider = QSlider(Qt.Orientation.Horizontal)
+        self.mic_threshold_slider.setRange(1, 100)
+        self.mic_threshold_slider.setValue(int(state.mic_threshold * 1000))
+        sens_row.addWidget(self.mic_threshold_slider)
+        mg.addLayout(sens_row)
+
+        self.mic_level_bar = QLabel("Level: ")
+        self.mic_level_bar.setStyleSheet(
+            "color: #aaa; font-family: monospace; font-size: 10px;")
+        mg.addWidget(self.mic_level_bar)
+
+        mic_group.setLayout(mg)
+        layout.addWidget(mic_group)
+
+        layout.addStretch()
+
+    def _toggle_guide(self):
+        visible = not self.guide_label.isVisible()
+        self.guide_label.setVisible(visible)
+        self.guide_toggle.setText("Hide Setup Guide" if visible else "Show Setup Guide")
 
 
 class AppWindow(QMainWindow):
@@ -152,10 +339,9 @@ class AppWindow(QMainWindow):
             QTabBar::tab:hover { background: #333; color: #ddd; }
         """)
 
-        self.tabs.addTab(self._build_puppet_tab(), "Puppet")
-        self.tabs.addTab(self._build_obs_tab(), "OBS Control")
-        self.tabs.addTab(self._build_pc_tab(), "PC Portraits")
-        self.tabs.addTab(self._build_discord_tab(), "Discord")
+        self.tabs.addTab(self._build_characters_tab(), "Characters")
+        self.tabs.addTab(self._build_pc_tab(), "Portraits")
+        self.tabs.addTab(self._build_dice_tab(), "Dice")
 
         self.combat_tab = CombatTab(self.state, self.bestiary_manager)
         self.combat_tab.save_requested.connect(self._save_state)
@@ -163,7 +349,20 @@ class AppWindow(QMainWindow):
             lambda msg, ms: self.statusBar().showMessage(msg, ms))
         self.combat_tab.overlay_toggled.connect(self._toggle_initiative_overlay)
         self.combat_tab.combat_changed.connect(self._on_combat_changed)
-        self.tabs.addTab(self.combat_tab, "DM Combat")
+        self.tabs.addTab(self.combat_tab, "Combat")
+
+        # Settings gear button (corner widget, right side of tab bar)
+        self._settings_dialog = None
+        gear_btn = QToolButton()
+        gear_btn.setText(" \u2699 ")
+        gear_btn.setToolTip("Settings -- Discord, OBS, Microphone")
+        gear_btn.setStyleSheet(
+            "QToolButton { background: transparent; border: none; "
+            "color: #888; font-size: 18px; padding: 4px 10px; }"
+            "QToolButton:hover { color: #ddd; background: #333; "
+            "border-radius: 4px; }")
+        gear_btn.clicked.connect(self._open_settings)
+        self.tabs.setCornerWidget(gear_btn, Qt.Corner.TopRightCorner)
 
         # Initiative overlay (transparent, OBS window-captured)
         self.initiative_overlay = InitiativeOverlay(
@@ -173,13 +372,37 @@ class AppWindow(QMainWindow):
 
         main_layout.addWidget(self.library)
         main_layout.addWidget(self.tabs, stretch=1)
-        self.statusBar().showMessage("Ready -- all settings auto-save on change")
+
+        # --- Status bar with connection indicators ---
+        status_bar = self.statusBar()
+        status_bar.showMessage("Ready -- all settings auto-save on change")
+
+        # Right-aligned connection indicators
+        self._sb_obs_label = QLabel("OBS: --")
+        self._sb_obs_label.setStyleSheet("color: #555; font-size: 10px;")
+        self._sb_discord_label = QLabel("Discord: --")
+        self._sb_discord_label.setStyleSheet("color: #555; font-size: 10px;")
+        self._sb_scene_label = QLabel("Scene: --")
+        self._sb_scene_label.setStyleSheet("color: #555; font-size: 10px;")
+
+        sep_style = "color: #333; font-size: 10px;"
+
+        sep1 = QLabel("|")
+        sep1.setStyleSheet(sep_style)
+        sep2 = QLabel("|")
+        sep2.setStyleSheet(sep_style)
+
+        status_bar.addPermanentWidget(self._sb_obs_label)
+        status_bar.addPermanentWidget(sep1)
+        status_bar.addPermanentWidget(self._sb_discord_label)
+        status_bar.addPermanentWidget(sep2)
+        status_bar.addPermanentWidget(self._sb_scene_label)
 
     # ------------------------------------------------------------------
-    # Tab 1: NPC Puppet
+    # Tab 1: Characters (was "Puppet")
     # ------------------------------------------------------------------
 
-    def _build_puppet_tab(self):
+    def _build_characters_tab(self):
         tab = QWidget()
         layout = QVBoxLayout(tab)
         layout.setContentsMargins(8, 8, 8, 8)
@@ -237,7 +460,7 @@ class AppWindow(QMainWindow):
         editor_group.setLayout(editor_layout)
         layout.addWidget(editor_group)
 
-        # Bottom: Deck + Settings
+        # Bottom: Deck + Overlay toggle
         bottom = QHBoxLayout()
 
         deck_group = QGroupBox("Stream Deck")
@@ -272,136 +495,127 @@ class AppWindow(QMainWindow):
         deck_group.setLayout(dl)
         bottom.addWidget(deck_group, stretch=3)
 
-        settings_group = QGroupBox("Settings")
-        sl = QVBoxLayout()
-        sl.addWidget(QLabel("Mic Sensitivity:"))
-        self.threshold_slider = QSlider(Qt.Orientation.Horizontal)
-        self.threshold_slider.setRange(1, 100)
-        self.threshold_slider.setValue(int(self.state.mic_threshold * 1000))
-        self.threshold_slider.valueChanged.connect(self._on_threshold_change)
-        sl.addWidget(self.threshold_slider)
-        self.level_bar = QLabel("Level: ")
-        self.level_bar.setStyleSheet("color: #aaa; font-family: monospace; font-size: 10px;")
-        sl.addWidget(self.level_bar)
-        sl.addWidget(QLabel("Microphone:"))
-        self.mic_combo = QComboBox()
-        self.mic_combo.addItem("Default", None)
-        for di, dn in AudioMonitor.list_devices():
-            self.mic_combo.addItem(dn, di)
-        self.mic_combo.currentIndexChanged.connect(self._on_mic_changed)
-        sl.addWidget(self.mic_combo)
-        sl.addSpacing(10)
+        # Overlay toggle (standalone, no mic controls -- those are in Settings)
+        overlay_group = QGroupBox("Overlay")
+        ol = QVBoxLayout()
         self.overlay_btn = QPushButton("Show Overlay")
         self.overlay_btn.setCheckable(True)
         self.overlay_btn.setChecked(self.state.active_character_id is not None)
         self.overlay_btn.clicked.connect(self._toggle_overlay)
-        sl.addWidget(self.overlay_btn)
-        sl.addStretch()
-        settings_group.setLayout(sl)
-        bottom.addWidget(settings_group, stretch=1)
+        ol.addWidget(self.overlay_btn)
+        ol.addStretch()
+        overlay_group.setLayout(ol)
+        bottom.addWidget(overlay_group, stretch=1)
 
         layout.addLayout(bottom)
         return tab
 
     # ------------------------------------------------------------------
-    # Tab 2: OBS Control
+    # Tab 3: Dice (extracted from old Discord tab)
     # ------------------------------------------------------------------
 
-    def _build_obs_tab(self):
+    def _build_dice_tab(self):
         tab = QWidget()
         layout = QVBoxLayout(tab)
         layout.setContentsMargins(8, 8, 8, 8)
         layout.setSpacing(8)
 
-        # Connection
-        conn_group = QGroupBox("OBS Connection")
-        cg = QHBoxLayout()
-        cg.addWidget(QLabel("Host:"))
-        self.obs_host_input = QLineEdit(self.state.obs_host)
-        self.obs_host_input.setFixedWidth(120)
-        cg.addWidget(self.obs_host_input)
-        cg.addWidget(QLabel("Port:"))
-        self.obs_port_input = QLineEdit(str(self.state.obs_port))
-        self.obs_port_input.setFixedWidth(60)
-        cg.addWidget(self.obs_port_input)
-        cg.addWidget(QLabel("Password:"))
-        self.obs_pass_input = QLineEdit(self.state.obs_password)
-        self.obs_pass_input.setEchoMode(QLineEdit.EchoMode.Password)
-        self.obs_pass_input.setFixedWidth(120)
-        self.obs_pass_input.setPlaceholderText("(optional)")
-        cg.addWidget(self.obs_pass_input)
-        self.obs_connect_btn = QPushButton("Connect")
-        self.obs_connect_btn.setFixedWidth(100)
-        self.obs_connect_btn.clicked.connect(self._obs_connect)
-        cg.addWidget(self.obs_connect_btn)
-        self.obs_status = QLabel("*  Not connected")
-        self.obs_status.setStyleSheet("color: #888;")
-        cg.addWidget(self.obs_status)
-        self.obs_auto_check = QCheckBox("Auto-connect")
-        self.obs_auto_check.setChecked(self.state.obs_auto_connect)
-        self.obs_auto_check.stateChanged.connect(self._on_obs_auto_changed)
-        cg.addWidget(self.obs_auto_check)
-        cg.addStretch()
-        conn_group.setLayout(cg)
-        layout.addWidget(conn_group)
+        dice_group = QGroupBox("Dice Roll Overlay")
+        dg = QVBoxLayout()
 
-        content = QHBoxLayout()
+        dice_toggle = QHBoxLayout()
+        self.dice_show_btn = QPushButton("Show Dice Overlay")
+        self.dice_show_btn.setCheckable(True)
+        self.dice_show_btn.clicked.connect(self._toggle_dice_overlay)
+        dice_toggle.addWidget(self.dice_show_btn)
 
-        # Scenes
-        scene_group = QGroupBox("Scenes")
-        self.scene_layout = QVBoxLayout()
-        self.scene_buttons_area = QWidget()
-        self.scene_buttons_layout = QVBoxLayout(self.scene_buttons_area)
-        self.scene_buttons_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.scene_buttons_layout.setSpacing(4)
-        self.scene_placeholder = QLabel(
-            "Connect to OBS to see scenes.\n\n"
-            "OBS 28+: Tools -> WebSocket Server Settings.\n\n"
-            "Right-click a character -> Settings -> OBS Linked Actions\n"
-            "to auto-switch scenes per character.")
-        self.scene_placeholder.setStyleSheet("color: #888; padding: 20px;")
-        self.scene_placeholder.setWordWrap(True)
-        self.scene_buttons_layout.addWidget(self.scene_placeholder)
-        scene_scroll = QScrollArea()
-        scene_scroll.setWidget(self.scene_buttons_area)
-        scene_scroll.setWidgetResizable(True)
-        scene_scroll.setStyleSheet("QScrollArea { border: none; }")
-        self.scene_layout.addWidget(scene_scroll)
-        refresh_btn = QPushButton("Refresh Scenes")
-        refresh_btn.clicked.connect(self._obs_refresh_scenes)
-        self.scene_layout.addWidget(refresh_btn)
-        scene_group.setLayout(self.scene_layout)
-        content.addWidget(scene_group, stretch=2)
+        dice_toggle.addWidget(QLabel("Display Time:"))
+        self.dice_time_slider = QSlider(Qt.Orientation.Horizontal)
+        self.dice_time_slider.setRange(2, 15)
+        self.dice_time_slider.setValue(int(self.state.dice_display_time))
+        self.dice_time_slider.setFixedWidth(100)
+        self.dice_time_slider.valueChanged.connect(self._on_dice_time_changed)
+        dice_toggle.addWidget(self.dice_time_slider)
+        self.dice_time_label = QLabel(f"{int(self.state.dice_display_time)}s")
+        self.dice_time_label.setFixedWidth(24)
+        dice_toggle.addWidget(self.dice_time_label)
+        dice_toggle.addStretch()
+        dg.addLayout(dice_toggle)
 
-        # Controls
-        ctrl_group = QGroupBox("Stream Controls")
-        cl = QVBoxLayout()
-        self.stream_btn = QPushButton("*  Toggle Stream")
-        self.stream_btn.setFixedHeight(40)
-        self.stream_btn.clicked.connect(self.obs.toggle_stream)
-        self.stream_btn.setEnabled(False)
-        cl.addWidget(self.stream_btn)
-        self.record_btn = QPushButton("Toggle Recording")
-        self.record_btn.setFixedHeight(40)
-        self.record_btn.clicked.connect(self.obs.toggle_recording)
-        self.record_btn.setEnabled(False)
-        cl.addWidget(self.record_btn)
-        cl.addSpacing(10)
-        cl.addWidget(QLabel("Current Scene:"))
-        self.current_scene_label = QLabel("--")
-        self.current_scene_label.setFont(QFont("Segoe UI", 14, QFont.Weight.Bold))
-        self.current_scene_label.setStyleSheet("color: #00cc66; padding: 4px;")
-        cl.addWidget(self.current_scene_label)
-        cl.addStretch()
-        if not OBS_AVAILABLE:
-            warn = QLabel("*  obsws-python not installed.\nRun: pip install obsws-python")
-            warn.setStyleSheet("color: #cc6600; padding: 8px; font-weight: bold;")
-            warn.setWordWrap(True)
-            cl.addWidget(warn)
-        ctrl_group.setLayout(cl)
-        content.addWidget(ctrl_group, stretch=1)
+        # Side & stack layout options
+        dice_layout_row = QHBoxLayout()
+        dice_layout_row.addWidget(QLabel("Slide From:"))
+        self.dice_side_combo = QComboBox()
+        self.dice_side_combo.addItems(["left", "right"])
+        self.dice_side_combo.setCurrentText(self.state.dice_side)
+        self.dice_side_combo.setFixedWidth(80)
+        self.dice_side_combo.currentTextChanged.connect(self._on_dice_side_changed)
+        dice_layout_row.addWidget(self.dice_side_combo)
 
-        layout.addLayout(content)
+        dice_layout_row.addWidget(QLabel("Stack From:"))
+        self.dice_stack_combo = QComboBox()
+        self.dice_stack_combo.addItems(["top", "bottom"])
+        self.dice_stack_combo.setCurrentText(self.state.dice_stack)
+        self.dice_stack_combo.setFixedWidth(80)
+        self.dice_stack_combo.currentTextChanged.connect(self._on_dice_stack_changed)
+        dice_layout_row.addWidget(self.dice_stack_combo)
+
+        dice_layout_row.addWidget(QLabel("Display:"))
+        self.dice_mode_combo = QComboBox()
+        self.dice_mode_combo.addItems(["dice_and_card", "card_only", "dice_only"])
+        self.dice_mode_combo.setCurrentText(self.state.dice_display_mode)
+        self.dice_mode_combo.setFixedWidth(110)
+        self.dice_mode_combo.currentTextChanged.connect(self._on_dice_mode_changed)
+        dice_layout_row.addWidget(self.dice_mode_combo)
+
+        dice_layout_row.addStretch()
+        dg.addLayout(dice_layout_row)
+
+        # Scale slider
+        scale_row = QHBoxLayout()
+        scale_row.addWidget(QLabel("Scale:"))
+        self.dice_scale_slider = QSlider(Qt.Orientation.Horizontal)
+        self.dice_scale_slider.setRange(50, 200)  # 0.5x to 2.0x
+        self.dice_scale_slider.setValue(int(self.state.dice_scale * 100))
+        self.dice_scale_slider.setFixedWidth(100)
+        self.dice_scale_slider.valueChanged.connect(self._on_dice_scale_changed)
+        scale_row.addWidget(self.dice_scale_slider)
+        self.dice_scale_label = QLabel(f"{self.state.dice_scale:.1f}x")
+        self.dice_scale_label.setFixedWidth(30)
+        scale_row.addWidget(self.dice_scale_label)
+        scale_row.addStretch()
+        dg.addLayout(scale_row)
+
+        # Roll log
+        dg.addWidget(QLabel("Recent Rolls:"))
+        self.roll_log_area = QScrollArea()
+        self.roll_log_area.setWidgetResizable(True)
+        self.roll_log_area.setStyleSheet("QScrollArea { border: 1px solid #444; }")
+        self.roll_log_content = QWidget()
+        self.roll_log_layout = QVBoxLayout(self.roll_log_content)
+        self.roll_log_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.roll_log_layout.setSpacing(2)
+        self.roll_log_area.setWidget(self.roll_log_content)
+
+        placeholder = QLabel(
+            "Dice rolls from Avrae / D&D Beyond will appear here.\n\n"
+            "Connect the Discord bot via the Settings gear,\n"
+            "then set the Roll Channel ID to your dice channel.\n\n"
+            "Rolls will show on the stream overlay automatically!")
+        placeholder.setStyleSheet("color: #888; padding: 12px;")
+        placeholder.setWordWrap(True)
+        self.roll_log_layout.addWidget(placeholder)
+
+        dg.addWidget(self.roll_log_area)
+
+        # Test button
+        test_btn = QPushButton("Send Test Roll")
+        test_btn.clicked.connect(self._send_test_roll)
+        dg.addWidget(test_btn)
+
+        dice_group.setLayout(dg)
+        layout.addWidget(dice_group)
+
         return tab
 
     # ------------------------------------------------------------------
@@ -556,208 +770,13 @@ class AppWindow(QMainWindow):
 
         # Info
         info = QLabel(
-            "Each slot maps a character to an OBS audio source. "
-            "When that player speaks, their portrait highlights and animates. "
-            "Connect to OBS first to pick audio sources.")
+            "Each slot maps a character to a Discord voice user. "
+            "When that player speaks in the voice channel, their portrait "
+            "highlights and animates. Join a voice channel above to start.")
         info.setStyleSheet("color: #888; font-size: 10px;")
         info.setWordWrap(True)
         layout.addWidget(info)
 
-        return tab
-
-    # ------------------------------------------------------------------
-    # Tab 4: Discord Bot
-    # ------------------------------------------------------------------
-
-    def _build_discord_tab(self):
-        tab = QWidget()
-        layout = QVBoxLayout(tab)
-        layout.setContentsMargins(8, 8, 8, 8)
-        layout.setSpacing(8)
-
-        # Connection
-        conn_group = QGroupBox("Discord Bot Connection")
-        cg = QVBoxLayout()
-
-        token_row = QHBoxLayout()
-        token_row.addWidget(QLabel("Bot Token:"))
-        self.discord_token_input = QLineEdit(self.state.discord_token)
-        self.discord_token_input.setEchoMode(QLineEdit.EchoMode.Password)
-        self.discord_token_input.setPlaceholderText(
-            "Paste your bot token from Discord Developer Portal")
-        token_row.addWidget(self.discord_token_input)
-        self.discord_connect_btn = QPushButton("Connect")
-        self.discord_connect_btn.setFixedWidth(100)
-        self.discord_connect_btn.clicked.connect(self._discord_connect)
-        token_row.addWidget(self.discord_connect_btn)
-        cg.addLayout(token_row)
-
-        settings_row = QHBoxLayout()
-        settings_row.addWidget(QLabel("Roll Channel ID:"))
-        self.discord_channel_input = QLineEdit(
-            str(self.state.discord_roll_channel_id) if self.state.discord_roll_channel_id else "")
-        self.discord_channel_input.setPlaceholderText(
-            "Right-click #disc-rolls-only -> Copy Channel ID")
-        self.discord_channel_input.setFixedWidth(200)
-        settings_row.addWidget(self.discord_channel_input)
-
-        self.discord_status = QLabel("*  Not connected")
-        self.discord_status.setStyleSheet("color: #888;")
-        self.discord_status.setWordWrap(True)
-        settings_row.addWidget(self.discord_status)
-
-        self.discord_auto_check = QCheckBox("Auto-connect")
-        self.discord_auto_check.setChecked(self.state.discord_auto_connect)
-        self.discord_auto_check.stateChanged.connect(self._on_discord_auto_changed)
-        settings_row.addWidget(self.discord_auto_check)
-        settings_row.addStretch()
-        cg.addLayout(settings_row)
-
-        conn_group.setLayout(cg)
-        layout.addWidget(conn_group)
-
-        content = QHBoxLayout()
-
-        # Dice overlay settings
-        dice_group = QGroupBox("Dice Roll Overlay")
-        dg = QVBoxLayout()
-
-        dice_toggle = QHBoxLayout()
-        self.dice_show_btn = QPushButton("Show Dice Overlay")
-        self.dice_show_btn.setCheckable(True)
-        self.dice_show_btn.clicked.connect(self._toggle_dice_overlay)
-        dice_toggle.addWidget(self.dice_show_btn)
-
-        dice_toggle.addWidget(QLabel("Display Time:"))
-        self.dice_time_slider = QSlider(Qt.Orientation.Horizontal)
-        self.dice_time_slider.setRange(2, 15)
-        self.dice_time_slider.setValue(int(self.state.dice_display_time))
-        self.dice_time_slider.setFixedWidth(100)
-        self.dice_time_slider.valueChanged.connect(self._on_dice_time_changed)
-        dice_toggle.addWidget(self.dice_time_slider)
-        self.dice_time_label = QLabel(f"{int(self.state.dice_display_time)}s")
-        self.dice_time_label.setFixedWidth(24)
-        dice_toggle.addWidget(self.dice_time_label)
-        dice_toggle.addStretch()
-        dg.addLayout(dice_toggle)
-
-        # Side & stack layout options
-        dice_layout_row = QHBoxLayout()
-        dice_layout_row.addWidget(QLabel("Slide From:"))
-        self.dice_side_combo = QComboBox()
-        self.dice_side_combo.addItems(["left", "right"])
-        self.dice_side_combo.setCurrentText(self.state.dice_side)
-        self.dice_side_combo.setFixedWidth(80)
-        self.dice_side_combo.currentTextChanged.connect(self._on_dice_side_changed)
-        dice_layout_row.addWidget(self.dice_side_combo)
-
-        dice_layout_row.addWidget(QLabel("Stack From:"))
-        self.dice_stack_combo = QComboBox()
-        self.dice_stack_combo.addItems(["top", "bottom"])
-        self.dice_stack_combo.setCurrentText(self.state.dice_stack)
-        self.dice_stack_combo.setFixedWidth(80)
-        self.dice_stack_combo.currentTextChanged.connect(self._on_dice_stack_changed)
-        dice_layout_row.addWidget(self.dice_stack_combo)
-
-        dice_layout_row.addWidget(QLabel("Display:"))
-        self.dice_mode_combo = QComboBox()
-        self.dice_mode_combo.addItems(["dice_and_card", "card_only", "dice_only"])
-        self.dice_mode_combo.setCurrentText(self.state.dice_display_mode)
-        self.dice_mode_combo.setFixedWidth(110)
-        self.dice_mode_combo.currentTextChanged.connect(self._on_dice_mode_changed)
-        dice_layout_row.addWidget(self.dice_mode_combo)
-
-        dice_layout_row.addStretch()
-        dg.addLayout(dice_layout_row)
-
-        # Scale slider
-        scale_row = QHBoxLayout()
-        scale_row.addWidget(QLabel("Scale:"))
-        self.dice_scale_slider = QSlider(Qt.Orientation.Horizontal)
-        self.dice_scale_slider.setRange(50, 200)  # 0.5x to 2.0x
-        self.dice_scale_slider.setValue(int(self.state.dice_scale * 100))
-        self.dice_scale_slider.setFixedWidth(100)
-        self.dice_scale_slider.valueChanged.connect(self._on_dice_scale_changed)
-        scale_row.addWidget(self.dice_scale_slider)
-        self.dice_scale_label = QLabel(f"{self.state.dice_scale:.1f}x")
-        self.dice_scale_label.setFixedWidth(30)
-        scale_row.addWidget(self.dice_scale_label)
-        scale_row.addStretch()
-        dg.addLayout(scale_row)
-
-        # Roll log
-        dg.addWidget(QLabel("Recent Rolls:"))
-        self.roll_log_area = QScrollArea()
-        self.roll_log_area.setWidgetResizable(True)
-        self.roll_log_area.setStyleSheet("QScrollArea { border: 1px solid #444; }")
-        self.roll_log_content = QWidget()
-        self.roll_log_layout = QVBoxLayout(self.roll_log_content)
-        self.roll_log_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.roll_log_layout.setSpacing(2)
-        self.roll_log_area.setWidget(self.roll_log_content)
-
-        placeholder = QLabel(
-            "Dice rolls from Avrae / D&D Beyond will appear here.\n\n"
-            "Make sure:\n"
-            "1. Your bot is in Raph's Discord server\n"
-            "2. The Roll Channel ID is set to #disc-rolls-only\n"
-            "3. Bot has Read Messages permission in that channel\n\n"
-            "Rolls will show on the stream overlay automatically!")
-        placeholder.setStyleSheet("color: #888; padding: 12px;")
-        placeholder.setWordWrap(True)
-        self.roll_log_layout.addWidget(placeholder)
-
-        dg.addWidget(self.roll_log_area)
-
-        # Test button
-        test_btn = QPushButton("Send Test Roll")
-        test_btn.clicked.connect(self._send_test_roll)
-        dg.addWidget(test_btn)
-
-        dice_group.setLayout(dg)
-        content.addWidget(dice_group, stretch=2)
-
-        # Right: Setup guide
-        guide_group = QGroupBox("Bot Setup Guide")
-        gg = QVBoxLayout()
-        guide = QLabel(
-            "<b>One-time setup:</b><br><br>"
-            "1. Go to <u>discord.com/developers</u><br>"
-            "2. Create a New Application<br>"
-            "3. Go to Bot -> Create Bot<br>"
-            "4. Copy the token -> paste here<br>"
-            "5. Enable these Intents:<br>"
-            "   * Message Content<br>"
-            "   * Server Members<br>"
-            "   * Voice States (for portraits)<br>"
-            "6. Go to OAuth2 -> URL Generator<br>"
-            "   * Scopes: bot<br>"
-            "   * Permissions: Read Messages,<br>"
-            "Read Message History,<br>"
-            "Connect (voice)<br>"
-            "7. Copy URL -> send to Raph<br>"
-            "8. He adds the bot to his server<br><br>"
-            "<b>Roll Channel ID:</b><br>"
-            "In Discord, enable Developer Mode<br>"
-            "(Settings -> Advanced), then<br>"
-            "right-click #disc-rolls-only<br>"
-            "-> Copy Channel ID")
-        guide.setStyleSheet("color: #bbb; font-size: 11px; padding: 8px;")
-        guide.setWordWrap(True)
-        gg.addWidget(guide)
-        gg.addStretch()
-
-        if not DISCORD_AVAILABLE:
-            warn = QLabel("*  discord.py not installed.\n"
-                          "Run: pip install discord.py")
-            warn.setStyleSheet("color: #cc6600; padding: 8px; font-weight: bold;")
-            warn.setWordWrap(True)
-            gg.addWidget(warn)
-
-        guide_group.setLayout(gg)
-        content.addWidget(guide_group, stretch=1)
-
-        layout.addLayout(content)
         return tab
 
     # ===================================================================
@@ -961,6 +980,50 @@ class AppWindow(QMainWindow):
             self.overlay.apply_settings(active.settings)
 
     # ===================================================================
+    # Settings Gear Dialog
+    # ===================================================================
+
+    def _open_settings(self):
+        """Open or raise the modeless Settings dialog."""
+        if self._settings_dialog is not None:
+            self._settings_dialog.raise_()
+            self._settings_dialog.activateWindow()
+            return
+
+        dlg = SettingsDialog(self.state, self.audio, parent=self)
+        self._settings_dialog = dlg
+
+        # Wire Discord controls
+        dlg.discord_connect_btn.clicked.connect(self._discord_connect)
+        dlg.discord_auto_check.stateChanged.connect(self._on_discord_auto_changed)
+
+        # Wire OBS controls
+        dlg.obs_connect_btn.clicked.connect(self._obs_connect)
+        dlg.obs_auto_check.stateChanged.connect(self._on_obs_auto_changed)
+
+        # Wire Mic controls
+        dlg.mic_threshold_slider.valueChanged.connect(self._on_threshold_change)
+        dlg.mic_combo.currentIndexChanged.connect(self._on_mic_changed)
+
+        # Sync current connection state into the dialog
+        if self.obs.is_connected:
+            dlg.obs_status.setText("*  Connected")
+            dlg.obs_status.setStyleSheet("color: #00cc66;")
+            dlg.obs_connect_btn.setText("Disconnect")
+        if self.discord.is_connected:
+            dlg.discord_status.setText("*  Connected")
+            dlg.discord_status.setStyleSheet("color: #00cc66;")
+            dlg.discord_connect_btn.setText("Disconnect")
+
+        # Clean up reference on close
+        dlg.finished.connect(self._on_settings_closed)
+        dlg.show()
+
+    def _on_settings_closed(self):
+        """Clear the settings dialog reference when the dialog is closed."""
+        self._settings_dialog = None
+
+    # ===================================================================
     # Stream Deck
     # ===================================================================
 
@@ -1059,12 +1122,21 @@ class AppWindow(QMainWindow):
     # ===================================================================
 
     def _obs_connect(self):
-        host = self.obs_host_input.text().strip() or "localhost"
-        try:
-            port = int(self.obs_port_input.text().strip())
-        except ValueError:
-            port = 4455
-        password = self.obs_pass_input.text()
+        """Connect/disconnect OBS -- reads from settings dialog or state."""
+        dlg = self._settings_dialog
+        if dlg:
+            host = dlg.obs_host_input.text().strip() or "localhost"
+            try:
+                port = int(dlg.obs_port_input.text().strip())
+            except ValueError:
+                port = 4455
+            password = dlg.obs_pass_input.text()
+        else:
+            # Auto-connect path or dialog not open -- use saved state
+            host = self.state.obs_host or "localhost"
+            port = self.state.obs_port or 4455
+            password = self.state.obs_password or ""
+
         self.state.obs_host = host
         self.state.obs_port = port
         self.state.obs_password = password
@@ -1075,105 +1147,53 @@ class AppWindow(QMainWindow):
             self.obs.connect(host, port, password)
 
     def _on_obs_connection(self, connected, info):
+        # Update status bar indicator
         if connected:
-            self.obs_status.setText(f"*  {info}")
-            self.obs_status.setStyleSheet("color: #00cc66;")
-            self.obs_connect_btn.setText("Disconnect")
-            self.stream_btn.setEnabled(True)
-            self.record_btn.setEnabled(True)
-            # Populate PC slot audio dropdowns
-            QTimer.singleShot(500, self._refresh_pc_audio_sources)
+            self._sb_obs_label.setText("OBS: OK")
+            self._sb_obs_label.setStyleSheet("color: #00cc66; font-size: 10px;")
+            self._sb_scene_label.setText("Scene: (loading...)")
+            self._sb_scene_label.setStyleSheet("color: #888; font-size: 10px;")
         else:
-            self.obs_status.setText(f"*  {info}")
-            self.obs_status.setStyleSheet("color: #888;")
-            self.obs_connect_btn.setText("Connect")
-            self.stream_btn.setEnabled(False)
-            self.record_btn.setEnabled(False)
-            self.current_scene_label.setText("--")
-            self._clear_scene_buttons()
+            self._sb_obs_label.setText("OBS: --")
+            self._sb_obs_label.setStyleSheet("color: #555; font-size: 10px;")
+            self._sb_scene_label.setText("Scene: --")
+            self._sb_scene_label.setStyleSheet("color: #555; font-size: 10px;")
+        # Update settings dialog if open
+        dlg = self._settings_dialog
+        if dlg:
+            if connected:
+                dlg.obs_status.setText(f"*  {info}")
+                dlg.obs_status.setStyleSheet("color: #00cc66;")
+                dlg.obs_connect_btn.setText("Disconnect")
+            else:
+                dlg.obs_status.setText(f"*  {info}")
+                dlg.obs_status.setStyleSheet("color: #888;")
+                dlg.obs_connect_btn.setText("Connect")
 
     def _on_obs_auto_changed(self, state):
         self.state.obs_auto_connect = bool(state)
         self._save_state()
 
     def _on_obs_scenes_updated(self, scenes):
-        self._rebuild_scene_buttons(scenes)
+        """Scenes refreshed -- no UI to rebuild, but update scene label."""
+        if self.obs.current_scene:
+            self._on_obs_scene_switched(self.obs.current_scene)
 
     def _on_obs_scene_switched(self, scene_name):
-        self.current_scene_label.setText(scene_name)
-        for i in range(self.scene_buttons_layout.count()):
-            w = self.scene_buttons_layout.itemAt(i).widget()
-            if w and isinstance(w, QPushButton):
-                is_cur = w.property("scene_name") == scene_name
-                if is_cur:
-                    w.setStyleSheet(
-                        "QPushButton { background: #1a4a2a; border: 2px solid #00cc66; "
-                        "color: #00ee77; font-weight: bold; padding: 8px; "
-                        "text-align: left; border-radius: 4px; }")
-                else:
-                    w.setStyleSheet(
-                        "QPushButton { background: #2a2a2a; border: 1px solid #555; "
-                        "padding: 8px; text-align: left; border-radius: 4px; color: #ddd; }"
-                        "QPushButton:hover { background: #3a3a3a; }")
+        """Update status bar scene indicator."""
+        self._sb_scene_label.setText(f"Scene: {scene_name}")
+        self._sb_scene_label.setStyleSheet("color: #aaa; font-size: 10px;")
 
     def _on_obs_error(self, msg):
         self.statusBar().showMessage(f"OBS: {msg}", 5000)
 
     def _on_obs_inputs_updated(self, inputs):
-        """OBS inputs list refreshed -- update PC slot audio dropdowns."""
-        for editor in self._pc_slot_editors:
-            editor.populate_audio_sources(inputs)
+        """OBS inputs list refreshed -- no per-slot audio dropdowns to update."""
+        pass
 
     def _on_obs_audio_levels(self, levels: dict):
         """Received real-time audio levels from OBS -- dispatch to PC system."""
-        # Update PC overlay manager
         self.pc_manager.update_audio_levels(levels)
-
-        # Update level meters in PC slot editors
-        for editor in self._pc_slot_editors:
-            src = editor.slot.obs_audio_source
-            if src:
-                editor.update_level_display(levels.get(src, 0.0))
-
-    def _obs_refresh_scenes(self):
-        if self.obs.is_connected:
-            self.obs.refresh_scenes()
-        else:
-            self.statusBar().showMessage("Connect to OBS first", 3000)
-
-    def _clear_scene_buttons(self):
-        while self.scene_buttons_layout.count():
-            item = self.scene_buttons_layout.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
-        lbl = QLabel("Connect to OBS to see scenes.")
-        lbl.setStyleSheet("color: #888; padding: 20px;")
-        self.scene_buttons_layout.addWidget(lbl)
-
-    def _rebuild_scene_buttons(self, scenes):
-        while self.scene_buttons_layout.count():
-            item = self.scene_buttons_layout.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
-        if not scenes:
-            lbl = QLabel("No scenes found.")
-            lbl.setStyleSheet("color: #888; padding: 20px;")
-            self.scene_buttons_layout.addWidget(lbl)
-            return
-        for sn in scenes:
-            btn = QPushButton(f"  {sn}")
-            btn.setFixedHeight(40)
-            btn.setCursor(Qt.CursorShape.PointingHandCursor)
-            btn.setProperty("scene_name", sn)
-            btn.setStyleSheet(
-                "QPushButton { background: #2a2a2a; border: 1px solid #555; "
-                "padding: 8px; text-align: left; border-radius: 4px; color: #ddd; }"
-                "QPushButton:hover { background: #3a3a3a; }")
-            btn.clicked.connect(lambda checked, s=sn: self.obs.switch_scene(s))
-            self.scene_buttons_layout.addWidget(btn)
-        self.scene_buttons_layout.addStretch()
-        if self.obs.current_scene:
-            self._on_obs_scene_switched(self.obs.current_scene)
 
     # ===================================================================
     # PC Portraits Tab
@@ -1200,7 +1220,6 @@ class AppWindow(QMainWindow):
                     dice_packs[0])
         editor = PCSlotEditor(
             slot, self.state.characters,
-            obs_inputs=self.obs.inputs if self.obs.is_connected else None,
             dice_packs=dice_packs,
             dice_colors=dice_colors)
         editor.changed.connect(self._on_pc_slot_changed)
@@ -1271,11 +1290,6 @@ class AppWindow(QMainWindow):
         if self.pc_manager.is_visible:
             self.pc_manager.show(self.state.pc_overlay_mode)
 
-    def _refresh_pc_audio_sources(self):
-        """Called after OBS connects to populate audio dropdowns."""
-        if self.obs.is_connected:
-            self.obs.refresh_inputs()
-    
     # ------------------------------------------------------------------
     # Voice Receive Handlers
     # ------------------------------------------------------------------
@@ -1416,12 +1430,20 @@ class AppWindow(QMainWindow):
     # ===================================================================
 
     def _discord_connect(self):
-        token = self.discord_token_input.text().strip()
+        """Connect/disconnect Discord -- reads from settings dialog or state."""
+        dlg = self._settings_dialog
+        if dlg:
+            token = dlg.discord_token_input.text().strip()
+            channel_text = dlg.discord_channel_input.text().strip()
+        else:
+            # Auto-connect path or dialog not open -- use saved state
+            token = self.state.discord_token
+            channel_text = str(self.state.discord_roll_channel_id) if self.state.discord_roll_channel_id else ""
+
         if not token:
-            self.statusBar().showMessage("Enter a Discord bot token first", 3000)
+            self.statusBar().showMessage("Enter a Discord bot token in Settings", 3000)
             return
 
-        channel_text = self.discord_channel_input.text().strip()
         try:
             channel_id = int(channel_text) if channel_text else 0
         except ValueError:
@@ -1437,17 +1459,26 @@ class AppWindow(QMainWindow):
             self.discord.connect(token, roll_channel_id=channel_id)
 
     def _on_discord_connection(self, connected, info):
+        # Update status bar indicator
         if connected:
-            self.discord_status.setText(f"*  {info}")
-            self.discord_status.setStyleSheet("color: #00cc66;")
-            self.discord_connect_btn.setText("Disconnect")
-            
+            self._sb_discord_label.setText("Discord: OK")
+            self._sb_discord_label.setStyleSheet("color: #00cc66; font-size: 10px;")
             # Auto-refresh voice channels when bot connects
             QTimer.singleShot(1000, self._refresh_voice_channels)
         else:
-            self.discord_status.setText(f"*  {info}")
-            self.discord_status.setStyleSheet("color: #888;")
-            self.discord_connect_btn.setText("Connect")
+            self._sb_discord_label.setText("Discord: --")
+            self._sb_discord_label.setStyleSheet("color: #555; font-size: 10px;")
+        # Update settings dialog if open
+        dlg = self._settings_dialog
+        if dlg:
+            if connected:
+                dlg.discord_status.setText(f"*  {info}")
+                dlg.discord_status.setStyleSheet("color: #00cc66;")
+                dlg.discord_connect_btn.setText("Disconnect")
+            else:
+                dlg.discord_status.setText(f"*  {info}")
+                dlg.discord_status.setStyleSheet("color: #888;")
+                dlg.discord_connect_btn.setText("Connect")
 
     def _on_discord_auto_changed(self, state):
         self.state.discord_auto_connect = bool(state)
@@ -1461,7 +1492,7 @@ class AppWindow(QMainWindow):
         # Send to overlay
         self.dice_overlay.add_roll(event)
 
-        # Add to log in the Discord tab
+        # Add to log in the Dice tab
         self._add_roll_to_log(event)
 
         self.statusBar().showMessage(
@@ -1632,12 +1663,16 @@ class AppWindow(QMainWindow):
         threshold = self.state.mic_threshold
         is_talking = level > threshold
         self.overlay.set_talking(is_talking)
-        bar_len = int(min(level * 500, 25))
-        bar = "#" * bar_len + "-" * (25 - bar_len)
-        color = "#00cc66" if is_talking else "#888"
-        self.level_bar.setText(f"[{bar}]")
-        self.level_bar.setStyleSheet(
-            f"color: {color}; font-family: monospace; font-size: 10px;")
+
+        # Update level bar in settings dialog if open
+        dlg = self._settings_dialog
+        if dlg:
+            bar_len = int(min(level * 500, 25))
+            bar = "#" * bar_len + "-" * (25 - bar_len)
+            color = "#00cc66" if is_talking else "#888"
+            dlg.mic_level_bar.setText(f"[{bar}]")
+            dlg.mic_level_bar.setStyleSheet(
+                f"color: {color}; font-family: monospace; font-size: 10px;")
 
         # Also drive any DM-flagged PC portrait slots via local mic
         for i, slot in enumerate(self.state.pc_slots):
@@ -1653,7 +1688,10 @@ class AppWindow(QMainWindow):
         self._save_state()
 
     def _on_mic_changed(self, index):
-        device = self.mic_combo.currentData()
+        dlg = self._settings_dialog
+        if not dlg:
+            return
+        device = dlg.mic_combo.currentData()
         self.state.mic_device = device
         self.audio.restart(device=device)
         self._save_state()
