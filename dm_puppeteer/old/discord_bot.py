@@ -57,12 +57,18 @@ class DiceRollEvent:
     character_name: str = ""
     check_type: str = ""       # "Deception check", "Attack", "Saving Throw"
     roll_formula: str = ""     # "1d20 (13) + 6"
-    natural_roll: int = 0      # the d20 result
+    natural_roll: int = 0      # the d20 result (the one that COUNTS)
     total: int = 0
     is_critical: bool = False  # nat 20
     is_fumble: bool = False    # nat 1
     campaign_name: str = ""
     raw_text: str = ""
+
+    # Advantage / disadvantage (Brief 005) -- parser deferred to 005-B
+    is_advantage: bool = False
+    is_disadvantage: bool = False
+    secondary_roll: int = 0    # the d20 result that was DROPPED
+    die_type: str = "d20"      # "d20", "d6", etc. -- for future damage dice
 
 
 @dataclass
@@ -93,7 +99,7 @@ class AvraeParser:
         description: '1d20 (16) + 1 = `17`'
         footer.text: 'Rolled in Campaign Name'
     """
-    
+
     AVRAE_BOT_ID = 261302296103747584
 
     CHECK_PATTERN = re.compile(

@@ -481,15 +481,16 @@ class DiceSprite:
         sprite.paint(painter)
     """
 
-    # Die display size on the overlay (pixels)
-    DIE_SIZE = 96
+    # Base die display size on the overlay (pixels)
+    BASE_DIE_SIZE = 96
 
     def __init__(self, result: int, die_type: str = "d20",
                  pack_loader=None,
                  pack_name: str = "classic",
                  color: str = "red",
                  landing_x: float = 0, landing_y: float = 0,
-                 entry_edge: str = "left"):
+                 entry_edge: str = "left",
+                 scale: float = 1.0):
         self.result = result
         self.die_type = die_type
         self.pack_name = pack_name
@@ -497,6 +498,7 @@ class DiceSprite:
         self.created = time.monotonic()
         self.phase = "enter"
         self.is_finished = False
+        self.die_size = int(self.BASE_DIE_SIZE * scale)
 
         # --- Loaded assets ---
         self.landing_frame: QPixmap = QPixmap()
@@ -552,7 +554,7 @@ class DiceSprite:
     def _setup_entry(self, edge: str):
         """Calculate entry position and velocity based on edge."""
         if edge == "left":
-            self.x = -self.DIE_SIZE
+            self.x = -self.die_size
             self.y = self.landing_y - random.uniform(60, 150)
             self._velocity_x = random.uniform(300, 500)
             self._velocity_y = random.uniform(-100, 50)
@@ -563,7 +565,7 @@ class DiceSprite:
             self._velocity_y = random.uniform(-100, 50)
         elif edge == "top":
             self.x = self.landing_x + random.uniform(-80, 80)
-            self.y = -self.DIE_SIZE
+            self.y = -self.die_size
             self._velocity_x = random.uniform(-80, 80)
             self._velocity_y = random.uniform(200, 400)
         else:
@@ -753,7 +755,7 @@ class DiceSprite:
         painter.setOpacity(self.opacity)
 
         # Calculate render position (centered on self.x, self.y)
-        size = int(self.DIE_SIZE * self.scale)
+        size = int(self.die_size * self.scale)
         half = size // 2
 
         # Apply rotation around die center

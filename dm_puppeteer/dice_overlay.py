@@ -173,10 +173,32 @@ class DiceRollOverlay(QMainWindow):
 
     position_changed = pyqtSignal(int, int)
 
-    CARD_WIDTH = 380
-    CARD_HEIGHT = 100
+    BASE_CARD_WIDTH = 380
+    BASE_CARD_HEIGHT = 100
     CARD_SPACING = 8
     MAX_VISIBLE = 4
+
+    @property
+    def card_width(self):
+        scale = self.state.dice_scale if self.state else 1.0
+        return int(self.BASE_CARD_WIDTH * scale)
+
+    @property
+    def card_height(self):
+        scale = self.state.dice_scale if self.state else 1.0
+        return int(self.BASE_CARD_HEIGHT * scale)
+
+    @property
+    def _dice_zone_height(self):
+        """Height of the dice sprite zone in dice_and_card mode."""
+        scale = self.state.dice_scale if self.state else 1.0
+        return int(400 * scale)
+
+    def _scaled_font(self, family, base_size, weight=QFont.Weight.Normal,
+                     italic=False):
+        """Return a QFont scaled by the current dice_scale factor."""
+        scale = self.state.dice_scale if self.state else 1.0
+        return QFont(family, max(6, int(base_size * scale)), weight, italic)
 
     def __init__(self, state=None, x=50, y=50):
         super().__init__()
@@ -220,19 +242,22 @@ class DiceRollOverlay(QMainWindow):
         self.render_timer.start(33)
 
     def _apply_sizing(self):
-        """Set overlay window size based on display mode."""
+        """Set overlay window size based on display mode and scale."""
+        scale = self.state.dice_scale if self.state else 1.0
         mode = self._get_display_mode()
         if mode == "card_only":
-            width = self.CARD_WIDTH + 120
+            width = self.card_width + int(120 * scale)
             height = (self.MAX_VISIBLE
-                      * (self.CARD_HEIGHT + self.CARD_SPACING) + 200)
+                      * (self.card_height + self.CARD_SPACING)
+                      + int(200 * scale))
         elif mode == "dice_only":
-            width = 500
-            height = 400
+            width = int(500 * scale)
+            height = int(400 * scale)
         else:  # dice_and_card
-            width = max(500, self.CARD_WIDTH + 120)
-            height = (400 + self.MAX_VISIBLE
-                      * (self.CARD_HEIGHT + self.CARD_SPACING))
+            width = max(int(500 * scale),
+                        self.card_width + int(120 * scale))
+            height = (int(400 * scale) + self.MAX_VISIBLE
+                      * (self.card_height + self.CARD_SPACING))
         self.resize(width, height)
 
     def _get_display_mode(self) -> str:
@@ -272,12 +297,18 @@ class DiceRollOverlay(QMainWindow):
         # Try PC slot lookup for pack/color preferences
         if self.state:
             for slot in self.state.pc_slots:
-                from .models import Character
                 char = self.state.characters.get(slot.character_id)
-                if not char:
-                    continue
-                slot_name = (slot.player_name or char.name).lower()
-                if slot_name in name_lower or name_lower in slot_name:
+                char_name = char.name.lower() if char else ""
+                slot_name = slot.player_name.lower()
+                # Match on player name or character name
+                matched = False
+                if slot_name and (slot_name in name_lower
+                                  or name_lower in slot_name):
+                    matched = True
+                elif char_name and (char_name in name_lower
+                                    or name_lower in char_name):
+                    matched = True
+                if matched:
                     color = slot.glow_color
                     pack_name = (slot.dice_pack
                                  or self.state.dice_default_pack)
@@ -296,6 +327,11 @@ class DiceRollOverlay(QMainWindow):
 
         mode = self._get_display_mode()
 
+        # Per-player entry direction
+        side, entry_dx, entry_dy = self._get_entry_vector_for_character(
+            event.character_name)
+        entry_edge = self._vector_to_edge(entry_dx, entry_dy)
+
         # --- Dice sprite(s) ---
         if mode in ("dice_only", "dice_and_card"):
             land_x, land_y = self._random_landing_position()
@@ -307,6 +343,7 @@ class DiceRollOverlay(QMainWindow):
                              else DicePackLoader.PLACEHOLDER_PACK)
 
             # Primary die
+            dice_scale = self.state.dice_scale if self.state else 1.0
             sprite = DiceSprite(
                 result=event.natural_roll or event.total,
                 die_type=event.die_type,
@@ -315,7 +352,8 @@ class DiceRollOverlay(QMainWindow):
                 color=dice_color,
                 landing_x=land_x,
                 landing_y=land_y,
-                entry_edge=self._side,
+                entry_edge=entry_edge,
+                scale=dice_scale,
             )
 
             # Crits/fumbles get extended hold for dramatic effect
@@ -326,7 +364,8 @@ class DiceRollOverlay(QMainWindow):
 
             # Secondary die for advantage/disadvantage
             if event.is_advantage or event.is_disadvantage:
-                land_x2 = land_x + DiceSprite.DIE_SIZE + 20
+                die_sz = int(DiceSprite.BASE_DIE_SIZE * dice_scale)
+                land_x2 = land_x + die_sz + 20
                 land_y2 = land_y + random.uniform(-15, 15)
                 secondary = DiceSprite(
                     result=event.secondary_roll,
@@ -336,14 +375,15 @@ class DiceRollOverlay(QMainWindow):
                     color=dice_color,
                     landing_x=land_x2,
                     landing_y=land_y2,
-                    entry_edge=self._side,
+                    entry_edge=entry_edge,
+                    scale=dice_scale,
                 )
                 secondary._is_secondary = True
                 self.dice_sprites.append(secondary)
 
         # --- Roll card (existing system) ---
         if mode in ("card_only", "dice_and_card"):
-            card = DiceRollCard(event, color, slide_from=self._side)
+            card = DiceRollCard(event, color, slide_from=side)
             if mode == "dice_and_card":
                 # Delay card entry until die settles
                 card._delay = 1.8
@@ -436,27 +476,30 @@ class DiceRollOverlay(QMainWindow):
         except ValueError:
             idx = 0
 
+        cw = self.card_width
+        ch = self.card_height
+
         # X position
         if self._side == "right":
-            base_x = self.canvas.width() - self.CARD_WIDTH - 10
+            base_x = self.canvas.width() - cw - 10
         else:
             base_x = 10
         x = base_x + int(card.slide_x)
 
         # Y offset for dice_and_card mode
         mode = self._get_display_mode()
-        card_area_top = 400 if mode == "dice_and_card" else 0
+        card_area_top = self._dice_zone_height if mode == "dice_and_card" else 0
 
         # Y position
         if self._stack == "bottom":
-            total_h = self.MAX_VISIBLE * (self.CARD_HEIGHT + self.CARD_SPACING)
+            total_h = self.MAX_VISIBLE * (ch + self.CARD_SPACING)
             y = card_area_top + 10 + total_h \
-                - (self.CARD_HEIGHT + self.CARD_SPACING) \
-                - idx * (self.CARD_HEIGHT + self.CARD_SPACING)
+                - (ch + self.CARD_SPACING) \
+                - idx * (ch + self.CARD_SPACING)
         else:
-            y = card_area_top + 10 + idx * (self.CARD_HEIGHT + self.CARD_SPACING)
+            y = card_area_top + 10 + idx * (ch + self.CARD_SPACING)
 
-        return x, y, self.CARD_WIDTH, self.CARD_HEIGHT
+        return x, y, cw, ch
 
     def _trigger_card_explode(self, cx, cy, card):
         """NAT 20: Card explodes into golden particles."""
@@ -560,14 +603,15 @@ class DiceRollOverlay(QMainWindow):
 
         Lands in the upper portion of the overlay (above cards).
         """
-        margin = DiceSprite.DIE_SIZE
+        scale = self.state.dice_scale if self.state else 1.0
+        margin = int(DiceSprite.BASE_DIE_SIZE * scale)
         w = self.canvas.width()
         mode = self._get_display_mode()
         if mode == "dice_only":
             h = self.canvas.height()
         else:
-            # dice_and_card: land in the upper 400px zone
-            h = 400
+            # dice_and_card: land in the scaled dice zone
+            h = self._dice_zone_height
         x = random.uniform(margin, max(margin + 1, w - margin * 2))
         y = random.uniform(margin, max(margin + 1, h * 0.6))
         return x, y
@@ -599,10 +643,100 @@ class DiceRollOverlay(QMainWindow):
 
         return best_color
 
+    # --- Per-player entry direction ---
+
+    def _get_entry_vector_for_character(self, character_name: str):
+        """Calculate entry direction based on player's portrait position.
+
+        Returns:
+            (side, entry_x, entry_y) where:
+            - side: "left" or "right" (for card slide direction)
+            - entry_x, entry_y: normalized direction for sprite trajectory
+
+        Falls back to default side if no portrait position is available.
+        """
+        if not self.state:
+            return self._side, 0.0, 0.0
+
+        # Find matching PC slot
+        name_lower = character_name.lower()
+        matched_slot = None
+        matched_index = -1
+        for i, slot in enumerate(self.state.pc_slots):
+            slot_name = slot.player_name.lower()
+            char = self.state.characters.get(slot.character_id)
+            char_name = char.name.lower() if char else ""
+            if ((slot_name and (slot_name in name_lower
+                                or name_lower in slot_name))
+                    or (char_name and (char_name in name_lower
+                                       or name_lower in char_name))):
+                matched_slot = slot
+                matched_index = i
+                break
+
+        if matched_slot is None or matched_index < 0:
+            return self._side, 0.0, 0.0
+
+        # Calculate portrait center in screen coordinates
+        if self.state.pc_overlay_mode == "strip":
+            portrait_cx = (
+                self.state.pc_overlay_x
+                + matched_index * (self.state.pc_portrait_size
+                                   + self.state.pc_strip_spacing)
+                + self.state.pc_portrait_size // 2)
+            portrait_cy = (self.state.pc_overlay_y
+                           + self.state.pc_portrait_size // 2)
+        else:
+            # Individual mode: use saved position
+            if (matched_slot.individual_x >= 0
+                    and matched_slot.individual_y >= 0):
+                portrait_cx = (matched_slot.individual_x
+                               + self.state.pc_portrait_size // 2)
+                portrait_cy = (matched_slot.individual_y
+                               + self.state.pc_portrait_size // 2)
+            else:
+                return self._side, 0.0, 0.0
+
+        # Dice overlay center
+        dice_cx = self.x() + self.width() // 2
+        dice_cy = self.y() + self.height() // 2
+
+        # Direction vector (portrait -> dice overlay, normalized)
+        dx = portrait_cx - dice_cx
+        dy = portrait_cy - dice_cy
+        magnitude = max(1.0, (dx**2 + dy**2) ** 0.5)
+        norm_x = dx / magnitude
+        norm_y = dy / magnitude
+
+        # Card slide direction: based on horizontal component
+        side = "left" if dx < 0 else "right"
+
+        return side, norm_x, norm_y
+
+    def _vector_to_edge(self, dx: float, dy: float) -> str:
+        """Convert a direction vector to an entry edge for DiceSprite.
+
+        Returns "left" or "right" based on the horizontal component.
+        With a typical layout (portrait strip below/beside the overlay),
+        left/right entry makes each player's dice visually distinct.
+        Using "top" would make most entries identical when portraits
+        are all below the overlay.
+        """
+        if abs(dx) < 0.01 and abs(dy) < 0.01:
+            return self._side  # fallback to default
+
+        return "left" if dx < 0 else "right"
+
     def set_display_mode(self, mode: str):
         """Set display mode and resize overlay accordingly."""
         if self.state:
             self.state.dice_display_mode = mode
+        self._apply_sizing()
+
+    def set_scale(self, scale: float):
+        """Set the dice/card scale factor (0.5 - 2.0)."""
+        if self.state:
+            self.state.dice_scale = max(0.5, min(2.0, scale))
         self._apply_sizing()
 
     # Draggable
@@ -655,29 +789,33 @@ class _DiceCanvas(QWidget):
             to_draw = visible[-ov.MAX_VISIBLE:]
 
             # Y offset for dice_and_card: cards below the dice zone
-            card_area_top = 400 if mode == "dice_and_card" else 0
+            card_area_top = (ov._dice_zone_height
+                             if mode == "dice_and_card" else 0)
+
+            cw = ov.card_width
+            ch = ov.card_height
 
             # Stack direction
             if ov._stack == "bottom":
                 total_h = (ov.MAX_VISIBLE
-                           * (ov.CARD_HEIGHT + ov.CARD_SPACING))
+                           * (ch + ov.CARD_SPACING))
                 y_offset = (card_area_top + 10 + total_h
-                            - (ov.CARD_HEIGHT + ov.CARD_SPACING))
-                step = -(ov.CARD_HEIGHT + ov.CARD_SPACING)
+                            - (ch + ov.CARD_SPACING))
+                step = -(ch + ov.CARD_SPACING)
             else:
                 y_offset = card_area_top + 10
-                step = ov.CARD_HEIGHT + ov.CARD_SPACING
+                step = ch + ov.CARD_SPACING
 
             # Side positioning
             if ov._side == "right":
-                base_x = ov.width() - ov.CARD_WIDTH - 10
+                base_x = ov.width() - cw - 10
             else:
                 base_x = 10
 
             for card in to_draw:
                 card_x = base_x + int(card.slide_x)
                 self._paint_card(painter, card, card_x, y_offset,
-                                 ov.CARD_WIDTH, ov.CARD_HEIGHT)
+                                 cw, ch)
                 y_offset += step
 
         # 3. Effects on top of everything (particles, d20 flash)
@@ -699,9 +837,16 @@ class _DiceCanvas(QWidget):
         painter.save()
         painter.setOpacity(min(card.opacity, 1.0))
 
+        ov = self.overlay
         evt = card.event
         color = card.color
+        scale = ov.state.dice_scale if ov.state else 1.0
         rect = QRect(x, y, w, h)
+
+        # Scaled layout helpers
+        pad = int(14 * scale)
+        right_zone = int(90 * scale)
+        text_w = w - right_zone - pad
 
         # Background with gradient
         path = QPainterPath()
@@ -714,7 +859,7 @@ class _DiceCanvas(QWidget):
 
         # Colored accent bar on entry side
         accent_path = QPainterPath()
-        if self.overlay._side == "right":
+        if ov._side == "right":
             accent_path.addRoundedRect(float(x + w - 6), float(y),
                                        6, float(h), 3, 3)
         else:
@@ -737,27 +882,25 @@ class _DiceCanvas(QWidget):
 
         # Character name
         painter.setPen(QColor(255, 255, 255, 240))
-        name_font = QFont("Segoe UI", 11, QFont.Weight.Bold)
-        painter.setFont(name_font)
-        name_rect = QRect(x + 14, y + 6, w - 100, 22)
+        painter.setFont(ov._scaled_font("Segoe UI", 11, QFont.Weight.Bold))
+        name_rect = QRect(x + pad, y + int(6 * scale), text_w, int(22 * scale))
         painter.drawText(name_rect, Qt.AlignmentFlag.AlignLeft |
                          Qt.AlignmentFlag.AlignVCenter,
                          evt.character_name)
 
         # Check type (smaller, muted)
         painter.setPen(QColor(180, 180, 200, 200))
-        type_font = QFont("Segoe UI", 9)
-        painter.setFont(type_font)
-        type_rect = QRect(x + 14, y + 28, w - 100, 18)
+        painter.setFont(ov._scaled_font("Segoe UI", 9))
+        type_rect = QRect(x + pad, y + int(28 * scale), text_w, int(18 * scale))
         painter.drawText(type_rect, Qt.AlignmentFlag.AlignLeft |
                          Qt.AlignmentFlag.AlignVCenter,
                          evt.check_type)
 
         # Roll formula
         painter.setPen(QColor(160, 160, 180, 180))
-        formula_font = QFont("Consolas", 9)
-        painter.setFont(formula_font)
-        formula_rect = QRect(x + 14, y + 48, w - 100, 18)
+        painter.setFont(ov._scaled_font("Consolas", 9))
+        formula_rect = QRect(x + pad, y + int(48 * scale),
+                             text_w, int(18 * scale))
         formula_text = evt.roll_formula
         # Clean up markdown artifacts
         formula_text = formula_text.replace('**', '').replace('`', '')
@@ -768,10 +911,10 @@ class _DiceCanvas(QWidget):
         # Campaign name (small, at bottom)
         if evt.campaign_name:
             painter.setPen(QColor(120, 120, 140, 140))
-            camp_font = QFont("Segoe UI", 7, QFont.Weight.Normal,
-                              italic=True)
-            painter.setFont(camp_font)
-            camp_rect = QRect(x + 14, y + h - 20, w - 100, 16)
+            painter.setFont(ov._scaled_font("Segoe UI", 7,
+                            QFont.Weight.Normal, italic=True))
+            camp_rect = QRect(x + pad, y + h - int(20 * scale),
+                              text_w, int(16 * scale))
             painter.drawText(camp_rect, Qt.AlignmentFlag.AlignLeft |
                              Qt.AlignmentFlag.AlignVCenter,
                              evt.campaign_name)
@@ -791,30 +934,31 @@ class _DiceCanvas(QWidget):
             total_label = ""
 
         # Big total number
-        total_font = QFont("Segoe UI", 28, QFont.Weight.Bold)
-        painter.setFont(total_font)
+        painter.setFont(ov._scaled_font("Segoe UI", 28, QFont.Weight.Bold))
         painter.setPen(total_color)
-        total_rect = QRect(x + w - 90, y + 8, 80, 50)
+        total_rect = QRect(x + w - right_zone, y + int(8 * scale),
+                           int(80 * scale), int(50 * scale))
         painter.drawText(total_rect, Qt.AlignmentFlag.AlignCenter,
                          total_str)
 
         # Crit/fumble label
         if total_label:
-            label_font = QFont("Segoe UI", 8, QFont.Weight.Bold)
-            painter.setFont(label_font)
+            painter.setFont(ov._scaled_font("Segoe UI", 8,
+                            QFont.Weight.Bold))
             painter.setPen(total_color)
-            label_rect = QRect(x + w - 90, y + 58, 80, 16)
+            label_rect = QRect(x + w - right_zone, y + int(58 * scale),
+                               int(80 * scale), int(16 * scale))
             painter.drawText(label_rect, Qt.AlignmentFlag.AlignCenter,
                              total_label)
 
-        # Natural roll indicator (small d20 icon)
+        # Natural roll indicator
         if evt.natural_roll > 0:
             painter.setPen(QColor(140, 140, 160, 160))
-            d20_font = QFont("Segoe UI", 8)
-            painter.setFont(d20_font)
-            d20_rect = QRect(x + w - 90, y + h - 22, 80, 16)
+            painter.setFont(ov._scaled_font("Segoe UI", 8))
+            d20_rect = QRect(x + w - right_zone, y + h - int(22 * scale),
+                             int(80 * scale), int(16 * scale))
             painter.drawText(d20_rect, Qt.AlignmentFlag.AlignCenter,
-                             f"\U0001f3b2 d20 \u2192 {evt.natural_roll}")
+                             f"[d20] -> {evt.natural_roll}")
 
         # --- NAT 1: Draw crack lines over the card ---
         if card.phase == "shatter" and card.crack_progress > 0:
@@ -898,8 +1042,14 @@ class _DiceCanvas(QWidget):
     def _paint_card_body(self, painter: QPainter, card: DiceRollCard,
                          x: int, y: int, w: int, h: int):
         """Paint card background + content (used by shatter halves)."""
+        ov = self.overlay
         evt = card.event
         color = card.color
+        scale = ov.state.dice_scale if ov.state else 1.0
+
+        pad = int(14 * scale)
+        right_zone = int(90 * scale)
+        text_w = w - right_zone - pad
 
         # Background
         path = QPainterPath()
@@ -911,7 +1061,7 @@ class _DiceCanvas(QWidget):
 
         # Accent bar
         accent_path = QPainterPath()
-        if self.overlay._side == "right":
+        if ov._side == "right":
             accent_path.addRoundedRect(float(x + w - 6), float(y),
                                        6, float(h), 3, 3)
         else:
@@ -924,38 +1074,43 @@ class _DiceCanvas(QWidget):
 
         # Character name
         painter.setPen(QColor(255, 255, 255, 240))
-        painter.setFont(QFont("Segoe UI", 11, QFont.Weight.Bold))
-        painter.drawText(QRect(x + 14, y + 6, w - 100, 22),
+        painter.setFont(ov._scaled_font("Segoe UI", 11, QFont.Weight.Bold))
+        painter.drawText(QRect(x + pad, y + int(6 * scale),
+                               text_w, int(22 * scale)),
                          Qt.AlignmentFlag.AlignLeft |
                          Qt.AlignmentFlag.AlignVCenter,
                          evt.character_name)
 
         # Check type
         painter.setPen(QColor(180, 180, 200, 200))
-        painter.setFont(QFont("Segoe UI", 9))
-        painter.drawText(QRect(x + 14, y + 28, w - 100, 18),
+        painter.setFont(ov._scaled_font("Segoe UI", 9))
+        painter.drawText(QRect(x + pad, y + int(28 * scale),
+                               text_w, int(18 * scale)),
                          Qt.AlignmentFlag.AlignLeft |
                          Qt.AlignmentFlag.AlignVCenter,
                          evt.check_type)
 
         # Formula
         painter.setPen(QColor(160, 160, 180, 180))
-        painter.setFont(QFont("Consolas", 9))
+        painter.setFont(ov._scaled_font("Consolas", 9))
         formula = evt.roll_formula.replace('**', '').replace('`', '')
-        painter.drawText(QRect(x + 14, y + 48, w - 100, 18),
+        painter.drawText(QRect(x + pad, y + int(48 * scale),
+                               text_w, int(18 * scale)),
                          Qt.AlignmentFlag.AlignLeft |
                          Qt.AlignmentFlag.AlignVCenter,
                          formula)
 
         # Total number in red
-        painter.setFont(QFont("Segoe UI", 28, QFont.Weight.Bold))
+        painter.setFont(ov._scaled_font("Segoe UI", 28, QFont.Weight.Bold))
         painter.setPen(QColor(255, 60, 60))
-        painter.drawText(QRect(x + w - 90, y + 8, 80, 50),
+        painter.drawText(QRect(x + w - right_zone, y + int(8 * scale),
+                               int(80 * scale), int(50 * scale)),
                          Qt.AlignmentFlag.AlignCenter, str(evt.total))
 
         # NAT 1 label
-        painter.setFont(QFont("Segoe UI", 8, QFont.Weight.Bold))
-        painter.drawText(QRect(x + w - 90, y + 58, 80, 16),
+        painter.setFont(ov._scaled_font("Segoe UI", 8, QFont.Weight.Bold))
+        painter.drawText(QRect(x + w - right_zone, y + int(58 * scale),
+                               int(80 * scale), int(16 * scale)),
                          Qt.AlignmentFlag.AlignCenter, "NAT 1")
 
         # Crack lines on the body pieces

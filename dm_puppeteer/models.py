@@ -589,6 +589,7 @@ class AppState:
         self.dice_stack: str = "top"       # "top" or "bottom"
         self.dice_display_mode: str = "dice_and_card"  # "dice_only", "card_only", "dice_and_card"
         self.dice_default_pack: str = "classic"
+        self.dice_scale: float = 1.0  # 0.5 to 2.0, multiplier on card/sprite sizes
 
         # Discord voice receive settings (NEW -- Phase 3.5)
         self.discord_voice_channel_id: int = 0
@@ -665,6 +666,7 @@ class AppState:
             "dice_stack": self.dice_stack,
             "dice_display_mode": self.dice_display_mode,
             "dice_default_pack": self.dice_default_pack,
+            "dice_scale": self.dice_scale,
             "discord_voice_channel_id": self.discord_voice_channel_id,
             "combat": self.combat.to_dict(),
             "bestiary": [b.to_dict() for b in self.bestiary],
@@ -738,6 +740,7 @@ class AppState:
         state.dice_stack = data.get("dice_stack", "top")
         state.dice_display_mode = data.get("dice_display_mode", "dice_and_card")
         state.dice_default_pack = data.get("dice_default_pack", "classic")
+        state.dice_scale = data.get("dice_scale", 1.0)
         state.discord_voice_channel_id = data.get("discord_voice_channel_id", 0)
 
         # Combat state (Phase 5)

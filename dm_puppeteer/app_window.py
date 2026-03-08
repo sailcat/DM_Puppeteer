@@ -92,7 +92,7 @@ class AppWindow(QMainWindow):
 
         # Dice roll overlay
         self.dice_overlay = DiceRollOverlay(
-            x=state.dice_overlay_x, y=state.dice_overlay_y)
+            state=state, x=state.dice_overlay_x, y=state.dice_overlay_y)
         self.dice_overlay.position_changed.connect(self._on_dice_overlay_moved)
         self.dice_overlay.set_display_time(state.dice_display_time)
         self.dice_overlay.set_side(state.dice_side)
@@ -658,8 +658,32 @@ class AppWindow(QMainWindow):
         self.dice_stack_combo.setFixedWidth(80)
         self.dice_stack_combo.currentTextChanged.connect(self._on_dice_stack_changed)
         dice_layout_row.addWidget(self.dice_stack_combo)
+
+        dice_layout_row.addWidget(QLabel("Display:"))
+        self.dice_mode_combo = QComboBox()
+        self.dice_mode_combo.addItems(["dice_and_card", "card_only", "dice_only"])
+        self.dice_mode_combo.setCurrentText(self.state.dice_display_mode)
+        self.dice_mode_combo.setFixedWidth(110)
+        self.dice_mode_combo.currentTextChanged.connect(self._on_dice_mode_changed)
+        dice_layout_row.addWidget(self.dice_mode_combo)
+
         dice_layout_row.addStretch()
         dg.addLayout(dice_layout_row)
+
+        # Scale slider
+        scale_row = QHBoxLayout()
+        scale_row.addWidget(QLabel("Scale:"))
+        self.dice_scale_slider = QSlider(Qt.Orientation.Horizontal)
+        self.dice_scale_slider.setRange(50, 200)  # 0.5x to 2.0x
+        self.dice_scale_slider.setValue(int(self.state.dice_scale * 100))
+        self.dice_scale_slider.setFixedWidth(100)
+        self.dice_scale_slider.valueChanged.connect(self._on_dice_scale_changed)
+        scale_row.addWidget(self.dice_scale_slider)
+        self.dice_scale_label = QLabel(f"{self.state.dice_scale:.1f}x")
+        self.dice_scale_label.setFixedWidth(30)
+        scale_row.addWidget(self.dice_scale_label)
+        scale_row.addStretch()
+        dg.addLayout(scale_row)
 
         # Roll log
         dg.addWidget(QLabel("Recent Rolls:"))
@@ -1166,9 +1190,19 @@ class AppWindow(QMainWindow):
         self._save_state()
 
     def _add_pc_slot_editor(self, slot):
+        # Get available dice packs and colors from the overlay's pack loader
+        dice_packs = []
+        dice_colors = []
+        if hasattr(self.dice_overlay, 'pack_loader'):
+            dice_packs = self.dice_overlay.pack_loader.available_packs()
+            if dice_packs:
+                dice_colors = self.dice_overlay.pack_loader.available_colors(
+                    dice_packs[0])
         editor = PCSlotEditor(
             slot, self.state.characters,
-            obs_inputs=self.obs.inputs if self.obs.is_connected else None)
+            obs_inputs=self.obs.inputs if self.obs.is_connected else None,
+            dice_packs=dice_packs,
+            dice_colors=dice_colors)
         editor.changed.connect(self._on_pc_slot_changed)
         editor.remove_requested.connect(self._remove_pc_slot)
         self.pc_slot_layout.addWidget(editor)
@@ -1509,6 +1543,18 @@ class AppWindow(QMainWindow):
         self.dice_overlay.set_stack(value)
         self._save_state()
 
+    def _on_dice_mode_changed(self, mode):
+        self.state.dice_display_mode = mode
+        self.dice_overlay.set_display_mode(mode)
+        self._save_state()
+
+    def _on_dice_scale_changed(self, value):
+        scale = value / 100.0
+        self.state.dice_scale = scale
+        self.dice_scale_label.setText(f"{scale:.1f}x")
+        self.dice_overlay.set_scale(scale)
+        self._save_state()
+
     def _on_dice_overlay_moved(self, x, y):
         self.state.dice_overlay_x = x
         self.state.dice_overlay_y = y
@@ -1535,10 +1581,30 @@ class AppWindow(QMainWindow):
         self._save_state()
 
     def _send_test_roll(self):
-        """Send a fake dice roll for testing the overlay."""
+        """Send a fake dice roll for testing the overlay.
+
+        Cycles through PC slots round-robin so per-player features
+        (entry direction, pack/color) can be verified visually.
+        """
         import random
-        names = ["Seraphyne", 'Theodore "Duke"Dumberry',
-                 "Cornelia Maizington", "Lachlan Macrae"]
+
+        # Use actual PC slot names if available
+        slot_names = []
+        for slot in self.state.pc_slots:
+            if slot.player_name:
+                slot_names.append(slot.player_name)
+            elif slot.character_id and slot.character_id in self.state.characters:
+                slot_names.append(self.state.characters[slot.character_id].name)
+        if not slot_names:
+            slot_names = ["Seraphyne", 'Theodore "Duke" Dumberry',
+                          "Cornelia Maizington", "Lachlan Macrae"]
+
+        # Round-robin through slots for deterministic testing
+        if not hasattr(self, '_test_roll_index'):
+            self._test_roll_index = 0
+        name = slot_names[self._test_roll_index % len(slot_names)]
+        self._test_roll_index += 1
+
         checks = ["Deception check", "Perception check", "Stealth check",
                    "Athletics check", "Persuasion check", "Insight check",
                    "Attack: Longsword", "Dexterity saving throw"]
@@ -1547,7 +1613,7 @@ class AppWindow(QMainWindow):
         total = nat + mod
 
         event = DiceRollEvent(
-            character_name=random.choice(names),
+            character_name=name,
             check_type=random.choice(checks),
             roll_formula=f"1d20 ({nat}) + {mod} = {total}",
             natural_roll=nat,

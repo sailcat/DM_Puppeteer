@@ -1,5 +1,4 @@
-"""
-Custom UI widgets for drag-and-drop character management
+"""Custom UI widgets for drag-and-drop character management
 """
 
 from PyQt6.QtWidgets import (
@@ -33,8 +32,7 @@ class CharacterSettingsDialog(QDialog):
 
         self.setWindowTitle(f"Settings -- {character.name or 'Character'}")
         self.setFixedWidth(380)
-        self.setStyleSheet("""
-            QDialog { background: #1e1e1e; color: #ddd; }
+        self.setStyleSheet("""QDialog { background: #1e1e1e; color: #ddd; }
             QGroupBox { border: 1px solid #444; border-radius: 6px;
                         margin-top: 8px; padding-top: 14px;
                         font-weight: bold; color: #ccc; }
@@ -69,7 +67,7 @@ class CharacterSettingsDialog(QDialog):
         self.size_slider.valueChanged.connect(self._on_size_change)
         size_row.addWidget(self.size_slider)
 
-        self.size_label = QLabel(f"{s.width} Ãƒâ€” {s.height} px")
+        self.size_label = QLabel(f"{s.width} x {s.height} px")
         self.size_label.setFixedWidth(100)
         size_row.addWidget(self.size_label)
         sg.addLayout(size_row)
@@ -146,7 +144,7 @@ class CharacterSettingsDialog(QDialog):
         fg.addLayout(bounce_row)
 
         bounce_params = QHBoxLayout()
-        bounce_params.addWidget(QLabel("  Amount:"))
+        bounce_params.addWidget(QLabel("Amount:"))
         self.bounce_amount_spin = QDoubleSpinBox()
         self.bounce_amount_spin.setRange(1.0, 50.0)
         self.bounce_amount_spin.setValue(s.bounce_amount)
@@ -157,7 +155,7 @@ class CharacterSettingsDialog(QDialog):
         self.bounce_speed_spin = QDoubleSpinBox()
         self.bounce_speed_spin.setRange(0.5, 10.0)
         self.bounce_speed_spin.setValue(s.bounce_speed)
-        self.bounce_speed_spin.setSuffix(" Hz")
+        self.bounce_speed_spin.setSuffix("Hz")
         self.bounce_speed_spin.setSingleStep(0.5)
         self.bounce_speed_spin.valueChanged.connect(self._on_change)
         bounce_params.addWidget(self.bounce_speed_spin)
@@ -176,7 +174,7 @@ class CharacterSettingsDialog(QDialog):
         fg.addLayout(popin_row)
 
         popin_params = QHBoxLayout()
-        popin_params.addWidget(QLabel("  Jump:"))
+        popin_params.addWidget(QLabel("Jump:"))
         self.popin_amount_spin = QDoubleSpinBox()
         self.popin_amount_spin.setRange(1.0, 60.0)
         self.popin_amount_spin.setValue(s.popin_amount)
@@ -241,7 +239,7 @@ class CharacterSettingsDialog(QDialog):
         """Unified size slider -- sets both width and height to the same value."""
         self.settings.width = value
         self.settings.height = value
-        self.size_label.setText(f"{value} Ãƒâ€” {value} px")
+        self.size_label.setText(f"{value} x {value} px")
         self.settings_changed.emit()
 
     def _on_change(self, *_):
@@ -295,8 +293,7 @@ class ImageDropZone(QFrame):
         self._pixmap = None
         self._label_text = label or frame_name.replace('_', ' ').title()
         self._hover = False
-        self.setStyleSheet("""
-            ImageDropZone {
+        self.setStyleSheet("""ImageDropZone {
                 border: 2px dashed #666; border-radius: 8px; background: #2a2a2a;
             }
         """)
@@ -432,7 +429,7 @@ class CharacterCard(QFrame):
             painter.setPen(QColor(0, 200, 100))
             painter.setFont(QFont("Segoe UI", 7))
             painter.drawText(self.rect().adjusted(0, 2, -5, 0),
-                             Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight, "*Â LIVE")
+                             Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight, "* LIVE")
         painter.end()
 
     def mousePressEvent(self, event):
@@ -465,9 +462,9 @@ class CharacterCard(QFrame):
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)
-        settings_action = menu.addAction("âš™  Settings...")
+        settings_action = menu.addAction("Settings...")
         menu.addSeparator()
-        delete_action = menu.addAction("Ã°Å¸â€”â€˜  Delete Character")
+        delete_action = menu.addAction("Delete Character")
 
         action = menu.exec(event.globalPos())
         if action == settings_action:
@@ -500,8 +497,7 @@ class DeckButtonWidget(QFrame):
         self.setAcceptDrops(True)
         self.setFixedSize(80, 80)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.setStyleSheet("""
-            DeckButtonWidget {
+        self.setStyleSheet("""DeckButtonWidget {
                 border: 1px solid #555; border-radius: 6px; background: #1a1a1a;
             }
         """)
@@ -667,7 +663,7 @@ class CharacterLibrary(QWidget):
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(4, 4, 4, 4)
 
-        header = QLabel("Ã°Å¸â€œÅ¡  Characters")
+        header = QLabel("Characters")
         header.setFont(QFont("Segoe UI", 11, QFont.Weight.Bold))
         header.setStyleSheet("color: #ddd; padding: 4px;")
         main_layout.addWidget(header)
@@ -742,8 +738,7 @@ class PCSlotEditor(QFrame):
         self.slot = slot
         self._characters = characters
 
-        self.setStyleSheet("""
-            PCSlotEditor {
+        self.setStyleSheet("""PCSlotEditor {
                 border: 1px solid #444; border-radius: 6px;
                 background: #252525; padding: 6px;
             }
